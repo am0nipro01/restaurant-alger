@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './hooks/useAuth'
 
 // Pages publiques
 import Home from './pages/public/Home'
@@ -15,9 +16,9 @@ import MenuAdmin from './pages/admin/MenuAdmin'
 import Contenu from './pages/admin/Contenu'
 import PlanDeSalle from './pages/admin/PlanDeSalle'
 
-// Protection des routes admin
+// Protection des routes admin — branché sur PocketBase
 function PrivateRoute({ children }) {
-  const isAuthenticated = false // à brancher sur PocketBase (Atelier 02)
+  const { isAuthenticated } = useAuth()
   return isAuthenticated ? children : <Navigate to="/admin" replace />
 }
 
