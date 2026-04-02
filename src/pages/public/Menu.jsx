@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import pb from '../../lib/pocketbase'
+import PublicLayout from '../../components/layout/PublicLayout'
 
 export default function Menu() {
   const [categories, setCategories] = useState([])
@@ -34,21 +35,26 @@ export default function Menu() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Chargement du menu...</p>
-      </div>
+      <PublicLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-gray-400 text-sm">Chargement du menu...</p>
+        </div>
+      </PublicLayout>
     )
   }
 
   if (categories.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Le menu n'est pas encore disponible.</p>
-      </div>
+      <PublicLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-gray-400 text-sm">Le menu n'est pas encore disponible.</p>
+        </div>
+      </PublicLayout>
     )
   }
 
   return (
+    <PublicLayout>
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <div className="py-20 text-center border-b border-gray-100">
@@ -107,5 +113,6 @@ export default function Menu() {
         </p>
       </div>
     </div>
+    </PublicLayout>
   )
 }

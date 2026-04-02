@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { genererCreneaux, verifierCapacite, creerReservation } from '../../lib/reservations'
+import PublicLayout from '../../components/layout/PublicLayout'
 
 const creneaux = genererCreneaux()
 
@@ -63,6 +64,7 @@ export default function Reservation() {
   }
 
   return (
+    <PublicLayout>
     <div className="min-h-screen bg-gray-50 px-4 py-16">
       <div className="max-w-lg mx-auto">
         <h1 className="text-3xl font-semibold text-center mb-2">Réservation</h1>
@@ -193,5 +195,6 @@ export default function Reservation() {
         </form>
       </div>
     </div>
+    </PublicLayout>
   )
 }

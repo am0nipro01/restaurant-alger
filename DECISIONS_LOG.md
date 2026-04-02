@@ -16,3 +16,4 @@
 | 2026-04-02 | 16:32 | Atelier 03 terminé et validé — formulaire réservation, créneaux, vérification capacité, page de confirmation stable |
 | 2026-04-02 | 16:58 | Atelier 04 terminé et validé — dashboard admin complet (réservations, menu, contenu, layout partagé) — refacto contenu par section à faire après Atelier 07 |
 | 2026-04-02 | 17:15 | Atelier 05 terminé et validé — plan de salle drag & drop, 30 tables, 4 tailles, 3 statuts, positions sauvegardées en base |
+| 2026-04-02 | — | Atelier 06 terminé et validé — page menu publique, onglets catégories sticky, filtre disponibilité, contenu piloté PocketBase |
