@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { genererCreneaux, verifierCapacite, creerReservation } from '../../lib/reservations'
 
 const creneaux = genererCreneaux()
@@ -15,8 +16,9 @@ const initialForm = {
 
 export default function Reservation() {
   const [form, setForm] = useState(initialForm)
-  const [etape, setEtape] = useState('formulaire') // 'formulaire' | 'chargement' | 'succes' | 'erreur'
+  const [etape, setEtape] = useState('formulaire') // 'formulaire' | 'chargement'
   const [erreur, setErreur] = useState('')
+  const navigate = useNavigate()
 
   // Date minimum = aujourd'hui
   const aujourdhui = new Date().toISOString().split('T')[0]
@@ -46,32 +48,18 @@ export default function Reservation() {
     })
 
     if (result.success) {
-      setEtape('succes')
+      navigate('/reservation/confirmation', {
+        state: {
+          nom: form.nom,
+          date: form.date,
+          heure: form.heure,
+          nb_personnes: form.nb_personnes,
+        }
+      })
     } else {
       setErreur(result.message)
       setEtape('formulaire')
     }
-  }
-
-  if (etape === 'succes') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="text-center max-w-md">
-          <div className="text-4xl mb-4">✓</div>
-          <h1 className="text-2xl font-semibold mb-2">Réservation confirmée</h1>
-          <p className="text-gray-500 mb-6">
-            Merci <strong>{form.nom}</strong>. Votre réservation pour le <strong>{form.date}</strong> à <strong>{form.heure}</strong> est bien enregistrée.
-            Nous vous contacterons par email pour confirmer.
-          </p>
-          <button
-            onClick={() => { setForm(initialForm); setEtape('formulaire') }}
-            className="text-sm underline text-gray-500 hover:text-black transition"
-          >
-            Faire une nouvelle réservation
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (

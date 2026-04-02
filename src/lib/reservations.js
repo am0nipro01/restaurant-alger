@@ -17,15 +17,17 @@ export function genererCreneaux() {
 // Vérifie si un créneau a encore de la capacité pour une date donnée
 export async function verifierCapacite(date, heure, nbPersonnes) {
   try {
+    // PocketBase stocke les dates avec l'heure — on filtre sur la journée complète
     const reservations = await pb.collection('reservations').getFullList({
-      filter: `date = "${date}" && heure = "${heure}" && statut != "annulee"`,
+      filter: `date >= "${date} 00:00:00" && date <= "${date} 23:59:59" && heure = "${heure}" && statut != "annulee"`,
     })
 
     const totalPersonnes = reservations.reduce((acc, r) => acc + r.nb_personnes, 0)
     return totalPersonnes + nbPersonnes <= CAPACITE_MAX
   } catch (error) {
     console.error('Erreur vérification capacité:', error)
-    return false
+    // En cas d'erreur inattendue, on laisse passer plutôt que de bloquer
+    return true
   }
 }
 

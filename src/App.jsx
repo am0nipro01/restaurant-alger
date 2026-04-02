@@ -5,6 +5,7 @@ import { useAuth } from './hooks/useAuth'
 import Home from './pages/public/Home'
 import Menu from './pages/public/Menu'
 import Reservation from './pages/public/Reservation'
+import ReservationConfirmation from './pages/public/ReservationConfirmation'
 import NotreHistoire from './pages/public/NotreHistoire'
 import Contact from './pages/public/Contact'
 
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/reservation" element={<Reservation />} />
+        <Route path="/reservation/confirmation" element={<ReservationConfirmation />} />
         <Route path="/notre-histoire" element={<NotreHistoire />} />
         <Route path="/contact" element={<Contact />} />
 
