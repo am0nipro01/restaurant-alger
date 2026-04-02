@@ -13,3 +13,4 @@
 | 2026-04-02 | 11:18 | Organisation du projet en 9 ateliers validée, dans l'ordre : Architecture → PocketBase → Réservation → Dashboard Admin → Plan de salle → Menu/Carte → Pages statiques → Multilingue/RTL → Design System |
 | 2026-04-02 | 14:36 | Atelier 01 terminé et validé — React+Vite, React Router, 5 collections PocketBase, config Netlify+env en place |
 | 2026-04-02 | 14:58 | Atelier 02 terminé et validé — auth PocketBase branchée, API Rules configurées, déploiement Fly.io reporté à la mise en production |
+| 2026-04-02 | 16:32 | Atelier 03 terminé et validé — formulaire réservation, créneaux, vérification capacité, page de confirmation stable |

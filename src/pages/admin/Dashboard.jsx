@@ -1,47 +1,52 @@
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../hooks/useAuth'
+import { Link } from 'react-router-dom'
+import AdminLayout from '../../components/layout/AdminLayout'
+
+const sections = [
+  {
+    href: '/admin/reservations',
+    label: 'Réservations',
+    description: 'Voir et gérer les demandes de réservation',
+    emoji: '📅',
+  },
+  {
+    href: '/admin/menu',
+    label: 'Menu',
+    description: 'Ajouter, modifier ou supprimer des plats',
+    emoji: '🍽️',
+  },
+  {
+    href: '/admin/contenu',
+    label: 'Contenu',
+    description: 'Modifier les textes des pages du site',
+    emoji: '✏️',
+  },
+  {
+    href: '/admin/plan-de-salle',
+    label: 'Plan de salle',
+    description: 'Gérer les tables et leur disposition',
+    emoji: '🪑',
+  },
+]
 
 export default function Dashboard() {
-  const { logout } = useAuth()
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/admin')
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-semibold">Dashboard Admin</h1>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-gray-500 hover:text-black transition"
+    <AdminLayout>
+      <h1 className="text-2xl font-semibold mb-8">Tableau de bord</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {sections.map((s) => (
+          <Link
+            key={s.href}
+            to={s.href}
+            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition flex gap-4 items-start"
           >
-            Se déconnecter
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <a href="/admin/reservations" className="bg-white rounded-xl p-6 shadow hover:shadow-md transition">
-            <h2 className="font-medium mb-1">Réservations</h2>
-            <p className="text-sm text-gray-500">Gérer les réservations</p>
-          </a>
-          <a href="/admin/menu" className="bg-white rounded-xl p-6 shadow hover:shadow-md transition">
-            <h2 className="font-medium mb-1">Menu</h2>
-            <p className="text-sm text-gray-500">Modifier la carte</p>
-          </a>
-          <a href="/admin/contenu" className="bg-white rounded-xl p-6 shadow hover:shadow-md transition">
-            <h2 className="font-medium mb-1">Contenu</h2>
-            <p className="text-sm text-gray-500">Modifier les pages</p>
-          </a>
-          <a href="/admin/plan-de-salle" className="bg-white rounded-xl p-6 shadow hover:shadow-md transition">
-            <h2 className="font-medium mb-1">Plan de salle</h2>
-            <p className="text-sm text-gray-500">Gérer les tables</p>
-          </a>
-        </div>
+            <span className="text-2xl">{s.emoji}</span>
+            <div>
+              <h2 className="font-medium mb-1">{s.label}</h2>
+              <p className="text-sm text-gray-500">{s.description}</p>
+            </div>
+          </Link>
+        ))}
       </div>
-    </div>
+    </AdminLayout>
   )
 }
