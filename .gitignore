@@ -1,0 +1,40 @@
+# ===========================
+# React / Node
+# ===========================
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# ===========================
+# Variables d'environnement
+# ===========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===========================
+# PocketBase
+# ===========================
+pb_data/
+pb_migrations/
+pocketbase
+
+# ===========================
+# OS
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Éditeurs
+# ===========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
