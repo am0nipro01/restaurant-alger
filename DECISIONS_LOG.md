@@ -23,3 +23,6 @@
 | 2026-04-02 | 21:12 | Contenu du menu (noms de plats, descriptions) volontairement non traduit — pratique standard des restaurants premium, l'identité du plat prime |
 | 2026-04-02 | 21:12 | Atelier 09 — Design System en attente de la maquette Google Stitch — prompt complet rédigé et transmis, intégration démarrera à réception de la maquette |
 | 2026-04-02 | 21:12 | Atelier 10 à créer — demandes du gérant : vue calendrier réservations, plan de salle lié aux réservations, séparation droits admin/manager |
+| 2026-04-03 | — | Atelier 09 terminé et validé — design system "The Desert Gallery" appliqué, toutes les pages converties depuis Stitch (Home, Menu, Notre Histoire, Contact, Réservation, Confirmation), i18n FR/EN/AR complété |
+| 2026-04-03 | — | Menu : scroll+anchors retenu (abandon tabs), champ description ajouté à menu_categories PocketBase, 3 descriptions saisies |
+| 2026-04-03 | — | Fix confirmation : positionnement absolute pour éviter le chevauchement image/texte (bug `-ml-20` Stitch) |
