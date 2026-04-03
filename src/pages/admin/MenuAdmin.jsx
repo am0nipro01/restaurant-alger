@@ -150,7 +150,7 @@ export default function MenuAdmin() {
         </button>
       </header>
 
-      {erreurConnexion && (
+      {erreurConnexion && categories.length === 0 && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-6 py-4 mb-8 font-body">
           ⚠ Impossible de joindre PocketBase. Lance le serveur : <code className="font-mono bg-red-100 px-2 py-0.5">cd backend &amp;&amp; .\pocketbase.exe serve</code>
         </div>
