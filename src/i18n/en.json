@@ -70,11 +70,20 @@
   },
   "histoire": {
     "label": "Our story",
+    "heritage_label": "Heritage",
+    "titre": "Our Story",
+    "intro_citation": "At the heart of Algiers the White, we have built a sanctuary dedicated to the memory of flavours, where every dish tells a millennial journey.",
+    "intro_p1": "Our adventure begins with a promise: to never let the fire of Algerian culinary traditions die out. From the Casbah to the southern oases, we have travelled the country to rediscover forgotten gestures and exceptional ingredients.",
+    "intro_p2": "Here, gastronomy is not just a matter of taste — it is an architecture of the soul. We use durum wheat from our plains, olive oil from our mountains, and the spices that made our historic trading posts famous.",
+    "modernite_titre": "The Essence of Modernity",
+    "modernite_p1": "Respecting the past does not mean being imprisoned by it. Our cuisine is a constant reinvention. By using cutting-edge techniques to elevate local produce, we create a bridge between yesterday and tomorrow.",
+    "modernite_p2": "Each service is a theatrical performance, a tribute to the legendary hospitality of our land. We invite you to a table where time stands still, giving way to the poetry of the palate.",
+    "collectif_label": "The Collective",
+    "collectif_titre": "A Shared Vision",
+    "collectif_desc": "Behind every gesture, an expert hand. Our team brings together passionate individuals, guardians of flavour, and visionaries.",
     "equipe_label": "The team",
-    "bientot": "Our story will be available soon.",
-    "equipe_bientot": "Team presentation coming soon.",
     "cta_titre": "Come and visit us",
-    "cta_texte": "Book your table now.",
+    "cta_desc": "The Algiers Gastronomy experience is above all lived around the table. Book your culinary journey today.",
     "cta_btn": "Book a table"
   },
   "contact": {

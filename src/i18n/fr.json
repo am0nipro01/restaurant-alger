@@ -70,11 +70,20 @@
   },
   "histoire": {
     "label": "Notre histoire",
+    "heritage_label": "L'Héritage",
+    "titre": "Notre Histoire",
+    "intro_citation": "Au cœur d'Alger la Blanche, nous avons érigé un sanctuaire dédié à la mémoire des saveurs, où chaque plat raconte un voyage millénaire.",
+    "intro_p1": "Notre aventure commence par une promesse : celle de ne jamais laisser s'éteindre le feu des traditions culinaires algériennes. De la Casbah aux oasis du Sud, nous avons parcouru le pays pour retrouver les gestes oubliés et les ingrédients d'exception.",
+    "intro_p2": "Ici, la gastronomie n'est pas qu'une question de goût, c'est une architecture de l'âme. Nous utilisons le blé dur de nos plaines, l'huile d'olive de nos montagnes et les épices qui ont fait la gloire de nos comptoirs historiques.",
+    "modernite_titre": "L'Essence de la Modernité",
+    "modernite_p1": "Respecter le passé ne signifie pas s'y enfermer. Notre cuisine est une réinvention constante. En utilisant des techniques de pointe pour sublimer les produits du terroir, nous créons un pont entre hier et demain.",
+    "modernite_p2": "Chaque service est une représentation théâtrale, un hommage à l'hospitalité légendaire de notre terre. Nous vous invitons à une table où le temps s'arrête, pour laisser place à la poésie du palais.",
+    "collectif_label": "Le Collectif",
+    "collectif_titre": "Une Vision Partagée",
+    "collectif_desc": "Derrière chaque geste, une main experte. Notre équipe rassemble des passionnés, des gardiens du goût et des visionnaires.",
     "equipe_label": "L'équipe",
-    "bientot": "Notre histoire sera bientôt disponible.",
-    "equipe_bientot": "La présentation de l'équipe sera bientôt disponible.",
     "cta_titre": "Venez nous rendre visite",
-    "cta_texte": "Réservez votre table dès maintenant.",
+    "cta_desc": "L'expérience Algiers Gastronomy se vit avant tout autour de la table. Réservez votre voyage culinaire dès aujourd'hui.",
     "cta_btn": "Réserver une table"
   },
   "contact": {
