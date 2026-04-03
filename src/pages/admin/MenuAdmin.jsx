@@ -28,6 +28,7 @@ export default function MenuAdmin() {
   const [categories, setCategories] = useState([])
   const [items, setItems]           = useState([])
   const [loading, setLoading]       = useState(true)
+  const [erreurConnexion, setErreurConnexion] = useState(false)
   const [catActive, setCatActive]   = useState(null)   // id catégorie sélectionnée
 
   // Formulaires
@@ -41,6 +42,7 @@ export default function MenuAdmin() {
 
   const charger = async () => {
     setLoading(true)
+    setErreurConnexion(false)
     try {
       const [cats, plats] = await Promise.all([
         pb.collection('menu_categories').getFullList({ sort: 'ordre' }),
@@ -49,7 +51,10 @@ export default function MenuAdmin() {
       setCategories(cats)
       setItems(plats)
       if (cats.length > 0 && !catActive) setCatActive(cats[0].id)
-    } catch (e) { console.error(e) }
+    } catch (e) {
+      console.error(e)
+      setErreurConnexion(true)
+    }
     setLoading(false)
   }
 
@@ -144,6 +149,12 @@ export default function MenuAdmin() {
           <IconPlus /> Ajouter un plat
         </button>
       </header>
+
+      {erreurConnexion && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-6 py-4 mb-8 font-body">
+          ⚠ Impossible de joindre PocketBase. Lance le serveur : <code className="font-mono bg-red-100 px-2 py-0.5">cd backend &amp;&amp; .\pocketbase.exe serve</code>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-stone-400 text-sm tracking-widest uppercase text-center py-24">Chargement…</div>
