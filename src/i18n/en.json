@@ -40,6 +40,8 @@
   },
   "reservation": {
     "titre": "Reservation",
+    "hero_titre": "A Table at the Heart of Algiers",
+    "hero_accroche": "The art of Algerian gastronomy in a confidential and timeless setting.",
     "sous_titre": "No deposit required — payment on site only.",
     "nom": "Full name",
     "email": "Email",

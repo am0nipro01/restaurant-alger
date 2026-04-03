@@ -40,6 +40,8 @@
   },
   "reservation": {
     "titre": "Réservation",
+    "hero_titre": "Une Table au Cœur d'Alger",
+    "hero_accroche": "L'art de la gastronomie algérienne dans un cadre confidentiel et intemporel.",
     "sous_titre": "Aucun acompte requis — règlement sur place uniquement.",
     "nom": "Nom complet",
     "email": "Email",
