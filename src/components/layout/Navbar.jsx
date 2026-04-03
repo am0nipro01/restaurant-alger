@@ -1,91 +1,147 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
-const liens = [
-  { href: '/', label: 'Accueil' },
-  { href: '/menu', label: 'Notre carte' },
-  { href: '/notre-histoire', label: 'Notre histoire' },
-  { href: '/contact', label: 'Contact' },
+const LANGS = [
+  { code: 'fr', label: 'FR' },
+  { code: 'en', label: 'EN' },
+  { code: 'ar', label: 'ع' },
 ]
 
 export default function Navbar() {
+  const { t, i18n } = useTranslation()
   const location = useLocation()
-  const [menuOuvert, setMenuOuvert] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const isActive = (path) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
+
+  const links = [
+    { to: '/', label: t('nav.accueil') },
+    { to: '/menu', label: t('nav.carte') },
+    { to: '/notre-histoire', label: t('nav.histoire') },
+    { to: '/contact', label: t('nav.contact') },
+  ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="fixed top-0 w-full z-50 bg-[#faf9f5]/90 backdrop-blur-sm flex justify-between items-center px-6 md:px-12 py-5 border-b border-black/5">
+      {/* Logo / Nom du restaurant */}
+      <Link
+        to="/"
+        className="font-headline text-base tracking-widest text-charcoal uppercase font-medium"
+      >
+        {/* TODO: remplacer par le nom définitif du restaurant */}
+        ALGIERS GASTRONOMY
+      </Link>
 
-        {/* Logo / Nom */}
-        <Link to="/" className="font-semibold text-lg tracking-tight">
-          Restaurant Alger
-        </Link>
-
-        {/* Nav desktop */}
-        <nav className="hidden md:flex items-center gap-8">
-          {liens.map((lien) => (
-            <Link
-              key={lien.href}
-              to={lien.href}
-              className={`text-sm transition-colors ${
-                location.pathname === lien.href
-                  ? 'text-black font-medium'
-                  : 'text-gray-400 hover:text-black'
-              }`}
-            >
-              {lien.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* CTA Réservation */}
-        <div className="hidden md:flex">
+      {/* Liens — desktop */}
+      <div className="hidden md:flex items-center gap-10">
+        {links.map(({ to, label }) => (
           <Link
-            to="/reservation"
-            className="bg-black text-white text-sm px-5 py-2 rounded-full hover:bg-gray-800 transition"
+            key={to}
+            to={to}
+            className={`font-label tracking-[0.2em] uppercase text-[11px] transition-colors duration-300 ${
+              isActive(to)
+                ? 'text-primary border-b border-primary pb-0.5'
+                : 'text-charcoal hover:text-primary'
+            }`}
           >
-            Réserver
+            {label}
           </Link>
+        ))}
+      </div>
+
+      {/* Droite — langue + réserver */}
+      <div className="flex items-center gap-6 md:gap-8">
+        {/* Sélecteur de langue — desktop */}
+        <div className="hidden lg:flex items-center gap-2">
+          {LANGS.map((lang, idx) => (
+            <span key={lang.code} className="flex items-center gap-2">
+              <button
+                onClick={() => i18n.changeLanguage(lang.code)}
+                className={`font-label tracking-[0.15em] uppercase text-[9px] transition-colors duration-300 ${
+                  i18n.language.startsWith(lang.code)
+                    ? 'text-primary'
+                    : 'text-stone-400 hover:text-primary'
+                }`}
+              >
+                {lang.label}
+              </button>
+              {idx < LANGS.length - 1 && (
+                <span className="text-stone-300 text-[8px]">/</span>
+              )}
+            </span>
+          ))}
         </div>
 
-        {/* Burger mobile */}
+        {/* Bouton réserver */}
+        <Link
+          to="/reservation"
+          className="bg-primary text-white px-7 py-2.5 font-label text-[10px] tracking-[0.25em] uppercase hover:bg-primary-container transition-all duration-300"
+        >
+          {t('nav.reserver')}
+        </Link>
+
+        {/* Burger — mobile */}
         <button
-          className="md:hidden p-2"
-          onClick={() => setMenuOuvert(!menuOuvert)}
+          className="md:hidden flex flex-col gap-[5px]"
+          onClick={() => setOpen(!open)}
           aria-label="Menu"
         >
-          <div className="flex flex-col gap-1.5">
-            <span className={`block w-6 h-0.5 bg-black transition-all ${menuOuvert ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-black transition-all ${menuOuvert ? 'opacity-0' : ''}`} />
-            <span className={`block w-6 h-0.5 bg-black transition-all ${menuOuvert ? '-rotate-45 -translate-y-2' : ''}`} />
-          </div>
+          <span
+            className={`block w-5 h-px bg-charcoal transition-all duration-300 origin-center ${
+              open ? 'rotate-45 translate-y-[6px]' : ''
+            }`}
+          />
+          <span
+            className={`block w-5 h-px bg-charcoal transition-all duration-300 ${
+              open ? 'opacity-0' : ''
+            }`}
+          />
+          <span
+            className={`block w-5 h-px bg-charcoal transition-all duration-300 origin-center ${
+              open ? '-rotate-45 -translate-y-[6px]' : ''
+            }`}
+          />
         </button>
       </div>
 
       {/* Menu mobile */}
-      {menuOuvert && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-6 flex flex-col gap-4">
-          {liens.map((lien) => (
+      {open && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-surface border-b border-black/5 py-8 px-6 flex flex-col gap-6 animate-fade-in shadow-desert">
+          {links.map(({ to, label }) => (
             <Link
-              key={lien.href}
-              to={lien.href}
-              onClick={() => setMenuOuvert(false)}
-              className={`text-sm ${
-                location.pathname === lien.href ? 'text-black font-medium' : 'text-gray-500'
+              key={to}
+              to={to}
+              onClick={() => setOpen(false)}
+              className={`font-label tracking-[0.2em] uppercase text-[11px] ${
+                isActive(to) ? 'text-primary' : 'text-charcoal'
               }`}
             >
-              {lien.label}
+              {label}
             </Link>
           ))}
-          <Link
-            to="/reservation"
-            onClick={() => setMenuOuvert(false)}
-            className="bg-black text-white text-sm px-5 py-2.5 rounded-full text-center mt-2"
-          >
-            Réserver une table
-          </Link>
+          {/* Langue — mobile */}
+          <div className="flex items-center gap-4 pt-4 border-t border-black/5">
+            {LANGS.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => {
+                  i18n.changeLanguage(lang.code)
+                  setOpen(false)
+                }}
+                className={`font-label tracking-[0.15em] uppercase text-[10px] ${
+                  i18n.language.startsWith(lang.code)
+                    ? 'text-primary'
+                    : 'text-stone-400'
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-    </header>
+    </nav>
   )
 }

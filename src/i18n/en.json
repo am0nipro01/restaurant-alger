@@ -1,1 +1,102 @@
-{}
+{
+  "nav": {
+    "accueil": "Home",
+    "carte": "Our menu",
+    "histoire": "Our story",
+    "contact": "Contact",
+    "reserver": "Book"
+  },
+  "home": {
+    "localisation": "Algiers, Algeria",
+    "titre": "An exceptional Algerian cuisine",
+    "sous_titre": "A modern celebration of Algerian culinary heritage.",
+    "cta_reserver": "Book a table",
+    "cta_carte": "Discover the menu",
+    "tables": "Tables",
+    "maison": "Homemade",
+    "ouverture": "Opening",
+    "ouverture_date": "May 2026",
+    "saveurs_label": "The Menu",
+    "saveurs_titre": "The Art of Algerian Gastronomy",
+    "saveurs_texte": "A bold reinvention of Mediterranean and Saharan classics. Every ingredient is selected with absolute rigour, paying tribute to Algeria's forgotten terroirs.",
+    "voir_carte": "See the full menu",
+    "statement_titre": "A Moment of Exception",
+    "statement_texte": "Let yourself be transported by a unique sensory experience at the heart of modern Algiers. Limited seats.",
+    "statement_cta": "Book your experience",
+    "resa_label": "Reservation",
+    "resa_titre": "Book your table",
+    "resa_texte": "No deposit, no online payment. Payment on site only.",
+    "resa_cta": "Make a reservation"
+  },
+  "menu": {
+    "titre": "Our Menu",
+    "sous_titre": "Traditional and gastronomic Algerian cuisine",
+    "vide": "No dishes available in this category.",
+    "chargement": "Loading menu...",
+    "indisponible": "The menu is not yet available.",
+    "footer": "The menu may change with the seasons."
+  },
+  "reservation": {
+    "titre": "Reservation",
+    "sous_titre": "No deposit required — payment on site only.",
+    "nom": "Full name",
+    "email": "Email",
+    "telephone": "Phone",
+    "date": "Date",
+    "heure": "Time",
+    "heure_placeholder": "-- Choose --",
+    "nb_personnes": "Number of guests",
+    "personne": "guest",
+    "personnes": "guests",
+    "message": "Message",
+    "message_label": "(optional)",
+    "message_placeholder": "Allergy, special occasion, specific request...",
+    "soumettre": "Confirm reservation",
+    "chargement": "Checking availability...",
+    "no_paiement": "No payment required. Payment on site only.",
+    "creneau_complet": "This time slot is full. Please choose another time or date.",
+    "erreur": "An error occurred. Please try again."
+  },
+  "confirmation": {
+    "titre": "Reservation confirmed",
+    "merci": "Thank you",
+    "message": "Your reservation for {{date}} at {{heure}} for {{nb}} guest(s) has been registered.",
+    "email_info": "We will contact you by email to confirm your visit.",
+    "nouvelle": "Make a new reservation",
+    "introuvable": "No reservation found.",
+    "lien": "Make a reservation"
+  },
+  "histoire": {
+    "label": "Our story",
+    "equipe_label": "The team",
+    "bientot": "Our story will be available soon.",
+    "equipe_bientot": "Team presentation coming soon.",
+    "cta_titre": "Come and visit us",
+    "cta_texte": "Book your table now.",
+    "cta_btn": "Book a table"
+  },
+  "contact": {
+    "label": "Contact",
+    "titre": "Contact us",
+    "sous_titre": "For any questions, feel free to write to us or visit us.",
+    "adresse_label": "Address",
+    "adresse": "Algiers, Algeria",
+    "adresse_info": "(address to be confirmed)",
+    "horaires_label": "Opening hours",
+    "horaires": "Lunch and dinner",
+    "horaires_detail": "12:00 — 23:00",
+    "resa_label": "Reservation",
+    "resa_btn": "Book online",
+    "bientot": "Contact information will be available soon."
+  },
+  "footer": {
+    "description": "Traditional and gastronomic Algerian cuisine",
+    "localisation": "Algiers, Algeria",
+    "nav_titre": "Navigation",
+    "resa_titre": "Reservation",
+    "resa_texte": "No deposit, payment on site",
+    "resa_btn": "Book a table",
+    "social_titre": "Follow us",
+    "droits": "© 2026 Algiers Gastronomy. All rights reserved."
+  }
+}

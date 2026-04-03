@@ -1,1 +1,156 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300..700;1,300..700&family=Manrope:wght@300..700&family=Noto+Serif+Arabic:wght@300..700&family=Noto+Sans+Arabic:wght@300..700&display=swap');
+
+/* ─────────────────────────────────────────────────────────
+   DESIGN SYSTEM — "The Desert Gallery"
+   Palette : Sands and Shadows
+   ───────────────────────────────────────────────────────── */
+
+@theme {
+  /* Surfaces — dégradé tonal, pas de bordures dures */
+  --color-surface:                  #faf9f5;
+  --color-surface-lowest:           #f5f3ee;
+  --color-surface-low:              #ede9df;
+  --color-surface-container:        #e5e0d4;
+  --color-surface-container-low:    #f4f4f0;
+  --color-surface-container-high:   #e9e8e4;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-high:             #dbd4c6;
+  --color-background:               #faf9f5;
+
+  /* Brand — terracotta / sable */
+  --color-primary:                  #845325;
+  --color-primary-container:        #c58b58;
+  --color-on-primary:               #ffffff;
+
+  /* Texte */
+  --color-charcoal:                 #1b1c1a;
+  --color-on-background:            #1b1c1a;
+  --color-on-surface:               #1b1c1a;
+  --color-on-surface-variant:       #51443b;
+
+  /* Contours */
+  --color-outline-variant:          #d6c3b6;
+
+  /* Polices — Stitch font aliases */
+  --font-headline: "Noto Serif", Georgia, serif;
+  --font-body:     "Manrope", system-ui, sans-serif;
+  --font-label:    "Manrope", system-ui, sans-serif;
+  --font-serif:    "Noto Serif", Georgia, serif;
+  --font-sans:     "Manrope", system-ui, sans-serif;
+  --font-arabic-serif: "Noto Serif Arabic", serif;
+  --font-arabic-sans:  "Noto Sans Arabic", sans-serif;
+
+  /* Border radius — 0px sur tout le système (règle architecturale) */
+  --radius-sm:   0px;
+  --radius:      0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-xl:   0px;
+  --radius-2xl:  0px;
+  --radius-3xl:  0px;
+  --radius-full: 0px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    background-color: var(--color-surface);
+    color: var(--color-charcoal);
+    font-family: "Manrope", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Noto Serif", Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Arabic RTL — bascule automatique des polices */
+  [dir="rtl"] p,
+  [dir="rtl"] span,
+  [dir="rtl"] label,
+  [dir="rtl"] button,
+  [dir="rtl"] a,
+  [dir="rtl"] input,
+  [dir="rtl"] select,
+  [dir="rtl"] textarea {
+    font-family: "Noto Sans Arabic", system-ui, sans-serif;
+  }
+
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] h5,
+  [dir="rtl"] h6 {
+    font-family: "Noto Serif Arabic", serif;
+    letter-spacing: 0;
+  }
+
+  /* Aucun arrondi — règle absolue */
+  *, *::before, *::after {
+    border-radius: 0;
+  }
+
+  /* Ghost borders pour les champs — 20% opacité */
+  input, select, textarea {
+    border-color: rgba(27, 28, 26, 0.20);
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Fade in — opacité + micro-scale (pas de slide) */
+  .animate-fade-in {
+    animation: fadeIn 300ms ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to   { opacity: 1; transform: scale(1.00); }
+  }
+
+  /* Desert shadow — ombre quasi imperceptible */
+  .shadow-desert {
+    box-shadow: 0 20px 40px rgba(27, 28, 26, 0.04);
+  }
+
+  /* Navbar flottante — verre sable */
+  .nav-glass {
+    background-color: rgba(250, 249, 245, 0.90);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Gradient Golden Hour — overlay héro */
+  .gradient-golden-hour {
+    background: linear-gradient(
+      135deg,
+      rgba(132, 83, 37, 0.08) 0%,
+      rgba(197, 139, 88, 0.05) 100%
+    );
+  }
+
+  /* Label architectural — all-caps, espacé */
+  .label-caps {
+    font-family: "Manrope", system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+  }
+}

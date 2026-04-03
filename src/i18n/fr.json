@@ -1,1 +1,102 @@
-{}
+{
+  "nav": {
+    "accueil": "Accueil",
+    "carte": "Notre carte",
+    "histoire": "Notre histoire",
+    "contact": "Contact",
+    "reserver": "Réserver"
+  },
+  "home": {
+    "localisation": "Alger, Algérie",
+    "titre": "Une cuisine algérienne d'exception",
+    "sous_titre": "Une célébration moderne du patrimoine culinaire algérien.",
+    "cta_reserver": "Réserver une table",
+    "cta_carte": "Découvrir la carte",
+    "tables": "Tables",
+    "maison": "Maison",
+    "ouverture": "Ouverture",
+    "ouverture_date": "Mai 2026",
+    "saveurs_label": "Le Menu",
+    "saveurs_titre": "L'Art de la Gastronomie Algérienne",
+    "saveurs_texte": "Une réinvention audacieuse des classiques méditerranéens et sahariens. Chaque ingrédient est sélectionné avec une rigueur absolue, rendant hommage aux terroirs oubliés de l'Algérie.",
+    "voir_carte": "Voir la carte complète",
+    "statement_titre": "Un Moment d'Exception",
+    "statement_texte": "Laissez-vous transporter par une expérience sensorielle unique au cœur de la Casbah moderne. Places limitées.",
+    "statement_cta": "Réserver votre expérience",
+    "resa_label": "Réservation",
+    "resa_titre": "Réservez votre table",
+    "resa_texte": "Sans acompte, sans paiement en ligne. Règlement sur place uniquement.",
+    "resa_cta": "Faire une réservation"
+  },
+  "menu": {
+    "titre": "Notre Carte",
+    "sous_titre": "Cuisine algérienne traditionnelle et gastronomique",
+    "vide": "Aucun plat disponible dans cette catégorie.",
+    "chargement": "Chargement du menu...",
+    "indisponible": "Le menu n'est pas encore disponible.",
+    "footer": "La carte peut évoluer selon les saisons et les arrivages."
+  },
+  "reservation": {
+    "titre": "Réservation",
+    "sous_titre": "Aucun acompte requis — règlement sur place uniquement.",
+    "nom": "Nom complet",
+    "email": "Email",
+    "telephone": "Téléphone",
+    "date": "Date",
+    "heure": "Heure",
+    "heure_placeholder": "-- Choisir --",
+    "nb_personnes": "Nombre de personnes",
+    "personne": "personne",
+    "personnes": "personnes",
+    "message": "Message",
+    "message_label": "(optionnel)",
+    "message_placeholder": "Allergie, occasion spéciale, demande particulière...",
+    "soumettre": "Confirmer la réservation",
+    "chargement": "Vérification en cours...",
+    "no_paiement": "Aucun paiement requis. Règlement sur place uniquement.",
+    "creneau_complet": "Ce créneau est complet. Veuillez choisir un autre horaire ou une autre date.",
+    "erreur": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "confirmation": {
+    "titre": "Réservation confirmée",
+    "merci": "Merci",
+    "message": "Votre réservation pour le {{date}} à {{heure}} pour {{nb}} personne(s) est bien enregistrée.",
+    "email_info": "Nous vous contacterons par email pour confirmer votre venue.",
+    "nouvelle": "Faire une nouvelle réservation",
+    "introuvable": "Aucune réservation trouvée.",
+    "lien": "Faire une réservation"
+  },
+  "histoire": {
+    "label": "Notre histoire",
+    "equipe_label": "L'équipe",
+    "bientot": "Notre histoire sera bientôt disponible.",
+    "equipe_bientot": "La présentation de l'équipe sera bientôt disponible.",
+    "cta_titre": "Venez nous rendre visite",
+    "cta_texte": "Réservez votre table dès maintenant.",
+    "cta_btn": "Réserver une table"
+  },
+  "contact": {
+    "label": "Contact",
+    "titre": "Nous contacter",
+    "sous_titre": "Pour toute question, n'hésitez pas à nous écrire ou à passer nous voir.",
+    "adresse_label": "Adresse",
+    "adresse": "Alger, Algérie",
+    "adresse_info": "(adresse à confirmer)",
+    "horaires_label": "Horaires",
+    "horaires": "Midi et soir",
+    "horaires_detail": "12h00 — 23h00",
+    "resa_label": "Réservation",
+    "resa_btn": "Réserver en ligne",
+    "bientot": "Les informations de contact seront bientôt disponibles."
+  },
+  "footer": {
+    "description": "Cuisine algérienne traditionnelle et gastronomique",
+    "localisation": "Alger, Algérie",
+    "nav_titre": "Navigation",
+    "resa_titre": "Réservation",
+    "resa_texte": "Sans acompte, règlement sur place",
+    "resa_btn": "Réserver une table",
+    "social_titre": "Suivez-nous",
+    "droits": "© 2026 Algiers Gastronomy. Tous droits réservés."
+  }
+}

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import { useRTL } from './hooks/useRTL'
 
 // Pages publiques
 import Home from './pages/public/Home'
@@ -23,26 +24,33 @@ function PrivateRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/admin" replace />
 }
 
+function AppContent() {
+  useRTL() // applique dir="rtl" et lang sur <html> automatiquement
+  return (
+    <Routes>
+      {/* Routes publiques */}
+      <Route path="/" element={<Home />} />
+      <Route path="/menu" element={<Menu />} />
+      <Route path="/reservation" element={<Reservation />} />
+      <Route path="/reservation/confirmation" element={<ReservationConfirmation />} />
+      <Route path="/notre-histoire" element={<NotreHistoire />} />
+      <Route path="/contact" element={<Contact />} />
+
+      {/* Routes admin */}
+      <Route path="/admin" element={<Login />} />
+      <Route path="/admin/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/admin/reservations" element={<PrivateRoute><Reservations /></PrivateRoute>} />
+      <Route path="/admin/menu" element={<PrivateRoute><MenuAdmin /></PrivateRoute>} />
+      <Route path="/admin/contenu" element={<PrivateRoute><Contenu /></PrivateRoute>} />
+      <Route path="/admin/plan-de-salle" element={<PrivateRoute><PlanDeSalle /></PrivateRoute>} />
+    </Routes>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Routes publiques */}
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/reservation" element={<Reservation />} />
-        <Route path="/reservation/confirmation" element={<ReservationConfirmation />} />
-        <Route path="/notre-histoire" element={<NotreHistoire />} />
-        <Route path="/contact" element={<Contact />} />
-
-        {/* Routes admin */}
-        <Route path="/admin" element={<Login />} />
-        <Route path="/admin/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/admin/reservations" element={<PrivateRoute><Reservations /></PrivateRoute>} />
-        <Route path="/admin/menu" element={<PrivateRoute><MenuAdmin /></PrivateRoute>} />
-        <Route path="/admin/contenu" element={<PrivateRoute><Contenu /></PrivateRoute>} />
-        <Route path="/admin/plan-de-salle" element={<PrivateRoute><PlanDeSalle /></PrivateRoute>} />
-      </Routes>
+      <AppContent />
     </BrowserRouter>
   )
 }

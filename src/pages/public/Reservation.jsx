@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { genererCreneaux, verifierCapacite, creerReservation } from '../../lib/reservations'
 import PublicLayout from '../../components/layout/PublicLayout'
 
@@ -16,6 +17,7 @@ const initialForm = {
 }
 
 export default function Reservation() {
+  const { t } = useTranslation()
   const [form, setForm] = useState(initialForm)
   const [etape, setEtape] = useState('formulaire') // 'formulaire' | 'chargement'
   const [erreur, setErreur] = useState('')
@@ -37,7 +39,7 @@ export default function Reservation() {
     // Vérification capacité
     const capaciteOk = await verifierCapacite(form.date, form.heure, Number(form.nb_personnes))
     if (!capaciteOk) {
-      setErreur('Ce créneau est complet. Veuillez choisir un autre horaire ou une autre date.')
+      setErreur(t('reservation.creneau_complet'))
       setEtape('formulaire')
       return
     }
@@ -67,16 +69,16 @@ export default function Reservation() {
     <PublicLayout>
     <div className="min-h-screen bg-gray-50 px-4 py-16">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-3xl font-semibold text-center mb-2">Réservation</h1>
+        <h1 className="text-3xl font-semibold text-center mb-2">{t('reservation.titre')}</h1>
         <p className="text-center text-gray-500 text-sm mb-10">
-          Aucun acompte requis — règlement sur place uniquement.
+          {t('reservation.sous_titre')}
         </p>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-8 flex flex-col gap-5">
 
           {/* Nom */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Nom complet *</label>
+            <label className="text-sm font-medium">{t('reservation.nom')} *</label>
             <input
               type="text"
               name="nom"
@@ -90,7 +92,7 @@ export default function Reservation() {
 
           {/* Email */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Email *</label>
+            <label className="text-sm font-medium">{t('reservation.email')} *</label>
             <input
               type="email"
               name="email"
@@ -104,7 +106,7 @@ export default function Reservation() {
 
           {/* Téléphone */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Téléphone</label>
+            <label className="text-sm font-medium">{t('reservation.telephone')}</label>
             <input
               type="tel"
               name="telephone"
@@ -118,7 +120,7 @@ export default function Reservation() {
           {/* Date + Heure */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium">Date *</label>
+              <label className="text-sm font-medium">{t('reservation.date')} *</label>
               <input
                 type="date"
                 name="date"
@@ -130,7 +132,7 @@ export default function Reservation() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium">Heure *</label>
+              <label className="text-sm font-medium">{t('reservation.heure')} *</label>
               <select
                 name="heure"
                 value={form.heure}
@@ -138,7 +140,7 @@ export default function Reservation() {
                 required
                 className="border rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black bg-white"
               >
-                <option value="">-- Choisir --</option>
+                <option value="">{t('reservation.heure_placeholder')}</option>
                 {creneaux.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -148,7 +150,7 @@ export default function Reservation() {
 
           {/* Nombre de personnes */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Nombre de personnes *</label>
+            <label className="text-sm font-medium">{t('reservation.nb_personnes')} *</label>
             <select
               name="nb_personnes"
               value={form.nb_personnes}
@@ -157,20 +159,20 @@ export default function Reservation() {
               className="border rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black bg-white"
             >
               {[1,2,3,4,5,6,7,8,9,10].map((n) => (
-                <option key={n} value={n}>{n} personne{n > 1 ? 's' : ''}</option>
+                <option key={n} value={n}>{n} {n > 1 ? t('reservation.personnes') : t('reservation.personne')}</option>
               ))}
             </select>
           </div>
 
           {/* Message */}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Message <span className="text-gray-400">(optionnel)</span></label>
+            <label className="text-sm font-medium">{t('reservation.message')} <span className="text-gray-400">{t('reservation.message_label')}</span></label>
             <textarea
               name="message"
               value={form.message}
               onChange={handleChange}
               rows={3}
-              placeholder="Allergie, occasion spéciale, demande particulière..."
+              placeholder={t('reservation.message_placeholder')}
               className="border rounded-lg px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-black resize-none"
             />
           </div>
@@ -186,11 +188,11 @@ export default function Reservation() {
             disabled={etape === 'chargement'}
             className="bg-black text-white rounded-lg py-3 text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50"
           >
-            {etape === 'chargement' ? 'Vérification en cours...' : 'Confirmer la réservation'}
+            {etape === 'chargement' ? t('reservation.chargement') : t('reservation.soumettre')}
           </button>
 
           <p className="text-xs text-gray-400 text-center">
-            Aucun paiement requis. Règlement sur place uniquement.
+            {t('reservation.no_paiement')}
           </p>
         </form>
       </div>

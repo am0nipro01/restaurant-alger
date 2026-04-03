@@ -1,43 +1,89 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+
+const NAV_LINKS = [
+  { to: '/', key: 'nav.accueil' },
+  { to: '/menu', key: 'nav.carte' },
+  { to: '/notre-histoire', key: 'nav.histoire' },
+  { to: '/contact', key: 'nav.contact' },
+]
 
 export default function Footer() {
+  const { t } = useTranslation()
+
   return (
-    <footer className="bg-white border-t border-gray-100 py-12 px-4">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start justify-between gap-8">
+    <footer className="bg-surface border-t border-stone-200 py-24 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
 
-        {/* Identité */}
-        <div>
-          <p className="font-semibold text-base mb-2">Restaurant Alger</p>
-          <p className="text-sm text-gray-400">Cuisine algérienne traditionnelle et gastronomique</p>
-          <p className="text-sm text-gray-400 mt-1">Alger, Algérie</p>
+        {/* Col 1 — Marque */}
+        <div className="md:col-span-4">
+          <div className="font-headline text-xl tracking-widest text-charcoal mb-8 uppercase font-medium">
+            {/* TODO: remplacer par le nom définitif du restaurant */}
+            ALGIERS GASTRONOMY
+          </div>
+          <p className="font-body text-[12px] text-stone-500 leading-relaxed uppercase tracking-widest max-w-xs font-light">
+            {t('footer.description')}
+          </p>
         </div>
 
-        {/* Navigation */}
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Navigation</p>
-          <Link to="/" className="text-sm text-gray-400 hover:text-black transition">Accueil</Link>
-          <Link to="/menu" className="text-sm text-gray-400 hover:text-black transition">Notre carte</Link>
-          <Link to="/notre-histoire" className="text-sm text-gray-400 hover:text-black transition">Notre histoire</Link>
-          <Link to="/contact" className="text-sm text-gray-400 hover:text-black transition">Contact</Link>
+        {/* Col 2 — Navigation */}
+        <div className="md:col-span-2">
+          <span className="font-label text-[9px] tracking-[0.3em] uppercase text-stone-400 mb-6 block font-bold">
+            {t('footer.nav_titre')}
+          </span>
+          <ul className="space-y-3">
+            {NAV_LINKS.map(({ to, key }) => (
+              <li key={to}>
+                <Link
+                  to={to}
+                  className="font-label text-[11px] tracking-widest uppercase text-stone-500 hover:text-primary transition-colors duration-300"
+                >
+                  {t(key)}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Réservation */}
-        <div className="flex flex-col gap-2">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Réservation</p>
-          <p className="text-sm text-gray-400">Sans acompte, règlement sur place</p>
+        {/* Col 3 — Réservation + adresse */}
+        <div className="md:col-span-3">
+          <span className="font-label text-[9px] tracking-[0.3em] uppercase text-stone-400 mb-6 block font-bold">
+            {t('footer.resa_titre')}
+          </span>
+          <p className="font-label text-[11px] tracking-widest uppercase text-stone-500 leading-relaxed mb-2">
+            {/* TODO: adresse définitive non confirmée */}
+            {t('footer.localisation')}
+          </p>
           <Link
             to="/reservation"
-            className="mt-2 bg-black text-white text-sm px-5 py-2 rounded-full hover:bg-gray-800 transition inline-block text-center"
+            className="inline-block mt-4 bg-primary text-white px-6 py-2.5 font-label text-[9px] tracking-[0.25em] uppercase hover:bg-primary-container transition-all duration-300"
           >
-            Réserver une table
+            {t('footer.resa_btn')}
           </Link>
+        </div>
+
+        {/* Col 4 — Réseaux sociaux */}
+        <div className="md:col-span-3">
+          <span className="font-label text-[9px] tracking-[0.3em] uppercase text-stone-400 mb-6 block font-bold">
+            {t('footer.social_titre')}
+          </span>
+          {/* TODO: liens réseaux sociaux non définis — à activer quand les comptes seront créés */}
+          <div className="flex flex-wrap gap-x-8 gap-y-3">
+            <span className="font-label text-[11px] tracking-widest uppercase text-stone-400">
+              Instagram
+            </span>
+            <span className="font-label text-[11px] tracking-widest uppercase text-stone-400">
+              Facebook
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto mt-10 pt-6 border-t border-gray-100">
-        <p className="text-xs text-gray-300 text-center">
-          © {new Date().getFullYear()} Restaurant Alger. Tous droits réservés.
-        </p>
+      {/* Copyright */}
+      <div className="max-w-7xl mx-auto mt-24 pt-8 border-t border-stone-200">
+        <span className="font-label text-[9px] tracking-[0.3em] uppercase text-stone-400">
+          {t('footer.droits')}
+        </span>
       </div>
     </footer>
   )

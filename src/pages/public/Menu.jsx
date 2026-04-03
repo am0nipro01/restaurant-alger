@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import pb from '../../lib/pocketbase'
 import PublicLayout from '../../components/layout/PublicLayout'
 
 export default function Menu() {
+  const { t } = useTranslation()
   const [categories, setCategories] = useState([])
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -37,7 +39,7 @@ export default function Menu() {
     return (
       <PublicLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-gray-400 text-sm">Chargement du menu...</p>
+          <p className="text-gray-400 text-sm">{t('menu.chargement')}</p>
         </div>
       </PublicLayout>
     )
@@ -47,7 +49,7 @@ export default function Menu() {
     return (
       <PublicLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <p className="text-gray-400 text-sm">Le menu n'est pas encore disponible.</p>
+          <p className="text-gray-400 text-sm">{t('menu.indisponible')}</p>
         </div>
       </PublicLayout>
     )
@@ -58,8 +60,8 @@ export default function Menu() {
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <div className="py-20 text-center border-b border-gray-100">
-        <h1 className="text-4xl font-semibold tracking-tight mb-3">Notre Carte</h1>
-        <p className="text-gray-400 text-sm">Cuisine algérienne traditionnelle et gastronomique</p>
+        <h1 className="text-4xl font-semibold tracking-tight mb-3">{t('menu.titre')}</h1>
+        <p className="text-gray-400 text-sm">{t('menu.sous_titre')}</p>
       </div>
 
       {/* Onglets catégories */}
@@ -85,7 +87,7 @@ export default function Menu() {
       <div className="max-w-3xl mx-auto px-4 py-12">
         {platsFiltres.length === 0 ? (
           <p className="text-gray-400 text-sm text-center py-12">
-            Aucun plat disponible dans cette catégorie.
+            {t('menu.vide')}
           </p>
         ) : (
           <div className="flex flex-col divide-y divide-gray-100">
@@ -109,7 +111,7 @@ export default function Menu() {
       {/* Footer menu */}
       <div className="border-t border-gray-100 py-10 text-center">
         <p className="text-xs text-gray-300">
-          La carte peut évoluer selon les saisons et les arrivages.
+          {t('menu.footer')}
         </p>
       </div>
     </div>

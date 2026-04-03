@@ -23,7 +23,7 @@ Mettre en place le dashboard admin pour les gérants : gestion des réservations
 ## Reste à faire
 - [ ] Plan de salle admin (Atelier 05)
 - [ ] Éditeur rich text pour le contenu (si besoin, actuellement textarea simple)
-- [ ] **Après Atelier 07** — Refactoriser `Contenu.jsx` et la collection `pages_contenu` pour gérer les sections de chaque page indépendamment (ex: hero, texte narratif, équipe sur la page Notre Histoire). Le schéma actuel traite chaque page comme un seul bloc — il faudra ajouter un champ `section` une fois qu'on saura exactement ce que contient chaque page.
+- [ ] **Après finalisation des maquettes** — Refactoriser `Contenu.jsx` et la collection `pages_contenu` pour gérer les sections de chaque page indépendamment. Reporté car les sections définitives ne sont pas encore connues — à faire une fois les maquettes validées.
 
 ## Questions ouvertes
 - Quelles sections composent chaque page ? (à définir à l'Atelier 07)
