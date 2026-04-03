@@ -62,11 +62,16 @@
     "erreur": "Une erreur est survenue. Veuillez réessayer."
   },
   "confirmation": {
-    "titre": "Réservation confirmée",
-    "merci": "Merci",
-    "message": "Votre réservation pour le {{date}} à {{heure}} pour {{nb}} personne(s) est bien enregistrée.",
-    "email_info": "Nous vous contacterons par email pour confirmer votre venue.",
-    "nouvelle": "Faire une nouvelle réservation",
+    "titre": "Votre réservation est confirmée",
+    "sous_titre": "Nous nous réjouissons de vous accueillir pour une expérience gastronomique au cœur de l'héritage algérien.",
+    "details_label": "Détails de la table",
+    "invite_label": "Invité",
+    "date_label": "Date",
+    "heure_label": "Heure",
+    "couverts_label": "Couverts",
+    "preparer_titre": "Préparez votre visite",
+    "preparer_texte": "Notre code vestimentaire reflète l'élégance de notre établissement : tenue de ville exigée. En cas de retard supérieur à 15 minutes, veuillez nous contacter.",
+    "nouvelle": "Effectuer une autre réservation",
     "introuvable": "Aucune réservation trouvée.",
     "lien": "Faire une réservation"
   },

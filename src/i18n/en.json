@@ -62,11 +62,16 @@
     "erreur": "An error occurred. Please try again."
   },
   "confirmation": {
-    "titre": "Reservation confirmed",
-    "merci": "Thank you",
-    "message": "Your reservation for {{date}} at {{heure}} for {{nb}} guest(s) has been registered.",
-    "email_info": "We will contact you by email to confirm your visit.",
-    "nouvelle": "Make a new reservation",
+    "titre": "Your reservation is confirmed",
+    "sous_titre": "We look forward to welcoming you for a gastronomic experience at the heart of Algerian heritage.",
+    "details_label": "Table details",
+    "invite_label": "Guest",
+    "date_label": "Date",
+    "heure_label": "Time",
+    "couverts_label": "Covers",
+    "preparer_titre": "Prepare your visit",
+    "preparer_texte": "Our dress code reflects the elegance of our establishment: smart attire required. If you are more than 15 minutes late, please contact us.",
+    "nouvelle": "Make another reservation",
     "introuvable": "No reservation found.",
     "lien": "Make a reservation"
   },
