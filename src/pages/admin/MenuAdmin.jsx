@@ -39,6 +39,8 @@ export default function MenuAdmin() {
   const [platForm, setPlatForm]     = useState(platVide)
   const [platModal, setPlatModal]   = useState(null)   // null | 'add' | 'edit'
   const [editId, setEditId]         = useState(null)
+  const [fichierPhoto, setFichierPhoto] = useState(null)   // File object
+  const [previewPhoto, setPreviewPhoto] = useState(null)   // URL locale pour preview
 
   const charger = async () => {
     setLoading(true)
@@ -83,23 +85,41 @@ export default function MenuAdmin() {
   // ── Plats
   const ouvrirAjout = () => {
     setPlatForm({ ...platVide, categorie: catActive || '' })
-    setEditId(null); setPlatModal('add')
+    setEditId(null); setFichierPhoto(null); setPreviewPhoto(null); setPlatModal('add')
   }
 
   const ouvrirEdit = (plat) => {
     setPlatForm({ nom: plat.nom, description: plat.description || '', prix: plat.prix, categorie: plat.categorie, disponible: plat.disponible })
-    setEditId(plat.id); setPlatModal('edit')
+    setEditId(plat.id)
+    setFichierPhoto(null)
+    setPreviewPhoto(plat.photo ? getPhotoUrl(plat) : null)
+    setPlatModal('edit')
+  }
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setFichierPhoto(file)
+    setPreviewPhoto(URL.createObjectURL(file))
   }
 
   const soumettreFormPlat = async (e) => {
     e.preventDefault()
     setErreurPlat('')
     try {
-      const data = { ...platForm, prix: parseFloat(platForm.prix) }
+      const fd = new FormData()
+      fd.append('nom', platForm.nom)
+      fd.append('description', platForm.description)
+      fd.append('prix', parseFloat(platForm.prix))
+      fd.append('categorie', platForm.categorie)
+      fd.append('disponible', platForm.disponible)
+      if (fichierPhoto) fd.append('photo', fichierPhoto)
+
       if (platModal === 'add') {
-        await pb.collection('menu_items').create({ ...data, ordre: items.length + 1 })
+        fd.append('ordre', items.length + 1)
+        await pb.collection('menu_items').create(fd)
       } else {
-        await pb.collection('menu_items').update(editId, data)
+        await pb.collection('menu_items').update(editId, fd)
       }
       setPlatModal(null); charger()
     } catch (err) {
@@ -379,6 +399,25 @@ export default function MenuAdmin() {
                 <label className={labelClass}>Description</label>
                 <textarea rows={3} className={inputClass + ' resize-none'}
                   value={platForm.description} onChange={(e) => setPlatForm(p => ({ ...p, description: e.target.value }))} />
+              </div>
+
+              {/* Photo */}
+              <div>
+                <label className={labelClass}>Photo du plat</label>
+                <div className="flex gap-6 items-start mt-2">
+                  {previewPhoto && (
+                    <div className="w-24 h-24 flex-shrink-0 overflow-hidden bg-[#e9e8e4]">
+                      <img src={previewPhoto} alt="Aperçu" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className="flex-1 flex flex-col items-center justify-center border border-dashed border-stone-300 hover:border-primary transition-colors cursor-pointer py-6 px-4 text-center">
+                    <span className="font-label text-[10px] tracking-[0.2em] uppercase text-stone-400">
+                      {fichierPhoto ? fichierPhoto.name : previewPhoto ? 'Remplacer la photo' : 'Choisir une image'}
+                    </span>
+                    <span className="text-[9px] text-stone-300 mt-1">JPG, PNG, WebP — max 5 MB</span>
+                    <input type="file" accept="image/*" className="sr-only" onChange={handlePhotoChange} />
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center gap-3">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function Login() {
@@ -10,9 +10,9 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Si déjà connecté, rediriger vers le dashboard
+  // Si déjà connecté, rediriger proprement sans boucle
   if (isAuthenticated) {
-    navigate('/admin/dashboard')
+    return <Navigate to="/admin/reservations" replace />
   }
 
   const handleSubmit = async (e) => {
@@ -23,7 +23,7 @@ export default function Login() {
     const result = await login(email, password)
 
     if (result.success) {
-      navigate('/admin/dashboard')
+      navigate('/admin/reservations')
     } else {
       setError(result.message)
       setLoading(false)

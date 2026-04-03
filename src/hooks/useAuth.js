@@ -3,11 +3,13 @@ import pb from '../lib/pocketbase'
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(pb.authStore.isValid)
+  const [user, setUser] = useState(pb.authStore.model)
 
   useEffect(() => {
     // Écoute les changements d'état d'authentification PocketBase
     const unsubscribe = pb.authStore.onChange((token, model) => {
       setIsAuthenticated(pb.authStore.isValid)
+      setUser(model)
     })
 
     return () => unsubscribe()
@@ -26,5 +28,5 @@ export function useAuth() {
     pb.authStore.clear()
   }
 
-  return { isAuthenticated, login, logout }
+  return { isAuthenticated, login, logout, user }
 }

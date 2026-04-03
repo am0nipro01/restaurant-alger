@@ -4,8 +4,6 @@ import AdminLayout from '../../components/layout/AdminLayout'
 import pb from '../../lib/pocketbase'
 import {
   dimensionsTable,
-  STATUT_STYLES,
-  STATUT_LABELS,
   STATUTS,
   initialiserTables,
   reinitialiserTables,
@@ -13,17 +11,39 @@ import {
   changerStatutTable,
 } from '../../lib/tables'
 
-const CANVAS_WIDTH = 820
+const CANVAS_WIDTH  = 820
 const CANVAS_HEIGHT = 840
 
-export default function PlanDeSalle() {
-  const [tables, setTables] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [tableSelectionnee, setTableSelectionnee] = useState(null)
-  const [enCours, setEnCours] = useState(false)
-  const [message, setMessage] = useState(null)
+// Stitch color scheme per statut
+const STYLE = {
+  libre:    { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
+  reservee: { bg: '#fef9c3', border: '#ca8a04', text: '#854d0e' },
+  occupee:  { bg: '#fee2e2', border: '#dc2626', text: '#991b1b' },
+}
 
-  const nodeRefs = useRef({})
+const STATUT_LABELS = { libre: 'Libre', reservee: 'Réservée', occupee: 'Occupée' }
+
+const STATUT_ACTION = {
+  libre:    { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  dot: 'bg-green-600',  label: 'Marquer comme Libre'    },
+  reservee: { bg: 'bg-yellow-50', text: 'text-yellow-800', border: 'border-yellow-200', dot: 'bg-yellow-600', label: 'Marquer comme Réservée'  },
+  occupee:  { bg: 'bg-red-50',    text: 'text-red-800',    border: 'border-red-200',    dot: 'bg-red-600',    label: 'Marquer comme Occupée'   },
+}
+
+const BADGE = {
+  libre:    'bg-green-100 text-green-800',
+  reservee: 'bg-yellow-100 text-yellow-800',
+  occupee:  'bg-red-100 text-red-800',
+}
+
+export default function PlanDeSalle() {
+  const [tables, setTables]                       = useState([])
+  const [reservations, setReservations]           = useState([]) // pour la liaison
+  const [loading, setLoading]                     = useState(true)
+  const [tableSelectionnee, setTableSelectionnee] = useState(null)
+  const [enCours, setEnCours]                     = useState(false)
+  const [message, setMessage]                     = useState(null)
+
+  const nodeRefs   = useRef({})
   const draggedRef = useRef(false)
 
   const getNodeRef = (id) => {
@@ -38,12 +58,26 @@ export default function PlanDeSalle() {
 
   const charger = async () => {
     setLoading(true)
+
+    // Fetch tables — critique, toujours en premier
     try {
-      const data = await pb.collection('tables').getFullList({ sort: 'numero' })
-      setTables(data)
+      const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
+      setTables(tablesData)
     } catch (e) {
-      console.error(e)
+      console.error('[PlanDeSalle] Erreur fetch tables:', e)
     }
+
+    // Fetch réservations — indépendant, une erreur ici ne bloque pas les tables
+    try {
+      const resData = await pb.collection('reservations').getFullList({
+        filter: 'statut = "confirmee" || statut = "en_attente"',
+        sort: 'date,heure',
+      })
+      setReservations(resData)
+    } catch (e) {
+      console.error('[PlanDeSalle] Erreur fetch réservations:', e)
+    }
+
     setLoading(false)
   }
 
@@ -52,12 +86,8 @@ export default function PlanDeSalle() {
   const handleInitialiser = async () => {
     setEnCours(true)
     const result = await initialiserTables()
-    if (result.success) {
-      await charger()
-      afficherMessage('ok', '30 tables créées avec succès.')
-    } else {
-      afficherMessage('info', result.message)
-    }
+    if (result.success) { await charger(); afficherMessage('ok', '30 tables créées.') }
+    else afficherMessage('info', result.message)
     setEnCours(false)
   }
 
@@ -65,25 +95,21 @@ export default function PlanDeSalle() {
     if (!confirm('Réinitialiser toutes les tables ? Les positions personnalisées seront perdues.')) return
     setEnCours(true)
     const result = await reinitialiserTables()
-    if (result.success) {
-      setTableSelectionnee(null)
-      await charger()
-      afficherMessage('ok', 'Tables réinitialisées.')
-    } else {
-      afficherMessage('erreur', result.message)
-    }
+    if (result.success) { setTableSelectionnee(null); await charger(); afficherMessage('ok', 'Tables réinitialisées.') }
+    else afficherMessage('erreur', result.message)
     setEnCours(false)
   }
 
   const handleDragStop = async (table, _e, data) => {
-    if (draggedRef.current) {
+    const wasDragged = draggedRef.current
+    draggedRef.current = false // toujours remettre à false après chaque interaction
+
+    if (wasDragged) {
       const { width, height } = dimensionsTable(table.capacite)
-      const newX = Math.max(0, Math.min(data.x, CANVAS_WIDTH - width))
+      const newX = Math.max(0, Math.min(data.x, CANVAS_WIDTH  - width))
       const newY = Math.max(0, Math.min(data.y, CANVAS_HEIGHT - height))
       await sauvegarderPosition(table.id, newX, newY)
-      setTables((prev) =>
-        prev.map((t) => t.id === table.id ? { ...t, position_x: newX, position_y: newY } : t)
-      )
+      setTables((prev) => prev.map((t) => t.id === table.id ? { ...t, position_x: newX, position_y: newY } : t))
     }
   }
 
@@ -96,10 +122,16 @@ export default function PlanDeSalle() {
     if (!tableSelectionnee) return
     const ok = await changerStatutTable(tableSelectionnee.id, statut)
     if (ok) {
-      setTables((prev) =>
-        prev.map((t) => t.id === tableSelectionnee.id ? { ...t, statut } : t)
-      )
+      setTables((prev) => prev.map((t) => t.id === tableSelectionnee.id ? { ...t, statut } : t))
       setTableSelectionnee((prev) => ({ ...prev, statut }))
+      // Si on libère la table, désassigner la réservation liée
+      if (statut === 'libre') {
+        const res = reservations.find((r) => r.table === tableSelectionnee.id)
+        if (res) {
+          await pb.collection('reservations').update(res.id, { table: null })
+          setReservations((prev) => prev.map((r) => r.id === res.id ? { ...r, table: '' } : r))
+        }
+      }
     }
   }
 
@@ -108,25 +140,39 @@ export default function PlanDeSalle() {
     return acc
   }, {})
 
+  // Trouver la réservation liée à la table sélectionnée
+  const resServation = tableSelectionnee
+    ? reservations.find((r) => r.table === tableSelectionnee.id) || null
+    : null
+
+  const formatHeure = (h) => h ? h.slice(0, 5) : '—'
+  const formatDate = (d) => {
+    if (!d) return '—'
+    return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+  }
+
   return (
-    <AdminLayout>
-      {/* En-tête */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold">Plan de salle</h1>
-        <div className="flex gap-3 items-center flex-wrap">
+    <AdminLayout fullHeight>
+
+      {/* ── Header ── */}
+      <header className="h-20 flex items-center justify-between px-10 bg-surface border-b border-stone-100 flex-shrink-0">
+        <div>
+          <h2 className="font-headline text-2xl uppercase tracking-widest text-charcoal">Plan de Salle</h2>
+          <p className="text-[10px] font-label tracking-[0.2em] uppercase text-stone-400">
+            Configuration Interactive de l'Espace
+          </p>
+        </div>
+        <div className="flex gap-4 items-center">
           {message && (
-            <span className={`text-sm ${message.type === 'ok' ? 'text-green-600' : message.type === 'erreur' ? 'text-red-500' : 'text-gray-500'}`}>
+            <span className={`text-xs tracking-wider uppercase ${message.type === 'ok' ? 'text-green-600' : message.type === 'erreur' ? 'text-red-500' : 'text-stone-400'}`}>
               {message.text}
             </span>
           )}
-          <button onClick={charger} className="text-sm text-gray-400 hover:text-black transition">
-            Actualiser
-          </button>
           {tables.length > 0 && (
             <button
               onClick={handleReinitialiser}
               disabled={enCours}
-              className="text-sm text-gray-400 hover:text-red-600 transition disabled:opacity-50"
+              className="font-label text-xs tracking-widest uppercase border border-stone-200 px-6 py-2.5 hover:bg-[#e9e8e4] transition-colors disabled:opacity-50"
             >
               Réinitialiser
             </button>
@@ -135,141 +181,227 @@ export default function PlanDeSalle() {
             <button
               onClick={handleInitialiser}
               disabled={enCours}
-              className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition disabled:opacity-50"
+              className="font-label text-xs tracking-widest uppercase bg-primary text-white px-8 py-2.5 hover:bg-primary-container transition-all disabled:opacity-50"
             >
-              {enCours ? 'Création en cours...' : 'Initialiser les 30 tables'}
+              {enCours ? 'Création…' : 'Initialiser les tables'}
             </button>
           )}
         </div>
-      </div>
+      </header>
 
-      {/* Compteurs */}
-      <div className="flex gap-6 mb-5 items-center">
-        {STATUTS.map((s) => (
-          <div key={s} className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full border-2 flex-shrink-0"
-              style={{ backgroundColor: STATUT_STYLES[s].bg, borderColor: STATUT_STYLES[s].border }} />
-            <span className="text-sm text-gray-500 whitespace-nowrap">
-              {STATUT_LABELS[s]} <strong className="text-black">{compteurs[s] || 0}</strong>
-            </span>
-          </div>
-        ))}
-        <span className="text-sm text-gray-400 ml-auto whitespace-nowrap">
-          {tables.length} table{tables.length > 1 ? 's' : ''} au total
-        </span>
-      </div>
+      {/* ── Corps ── */}
+      <div className="flex flex-grow overflow-hidden">
 
-      {loading ? (
-        <p className="text-gray-400 text-sm">Chargement...</p>
-      ) : tables.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 shadow-sm text-center">
-          <p className="text-gray-400 text-sm">
-            Aucune table. Cliquez sur "Initialiser les 30 tables" pour commencer.
-          </p>
-        </div>
-      ) : (
-        <div className="flex gap-5">
-          {/* Canvas */}
-          <div
-            className="relative bg-white rounded-xl shadow-sm border border-gray-100 flex-shrink-0 overflow-hidden"
-            style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
-          >
-            <svg className="absolute inset-0 pointer-events-none" width={CANVAS_WIDTH} height={CANVAS_HEIGHT}>
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f3f4f6" strokeWidth="1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
+        {/* ── Canvas ── */}
+        <section className="flex-grow flex items-center justify-center p-12 overflow-auto bg-[#f4f4f0]">
+          {loading ? (
+            <p className="text-stone-400 text-sm tracking-widest uppercase">Chargement…</p>
+          ) : tables.length === 0 ? (
+            <div className="bg-white p-16 text-center shadow-sm">
+              <p className="text-stone-400 text-sm">Aucune table. Cliquez sur "Initialiser les tables".</p>
+            </div>
+          ) : (
+            <div
+              className="relative bg-white shadow-2xl border border-stone-200 flex-shrink-0"
+              style={{
+                width: CANVAS_WIDTH,
+                height: CANVAS_HEIGHT,
+                backgroundImage: 'radial-gradient(#d6c3b6 1px, transparent 1px)',
+                backgroundSize: '40px 40px',
+              }}
+            >
+              {/* Murs décoratifs */}
+              <div className="absolute top-0 left-0 w-full h-4 bg-stone-800" />
+              <div className="absolute top-0 left-0 h-full w-4 bg-stone-800" />
+              <div className="absolute bottom-0 right-0 w-1/2 h-4 bg-stone-800" />
+              <div className="absolute top-0 right-0 h-1/3 w-4 bg-stone-800" />
 
-            {tables.map((table) => {
-              const { width, height } = dimensionsTable(table.capacite)
-              const style = STATUT_STYLES[table.statut]
-              const isSelected = tableSelectionnee?.id === table.id
-              const nodeRef = getNodeRef(table.id)
+              {/* Badge entrée */}
+              <div className="absolute -top-6 left-12 bg-white px-4 border border-stone-800 font-label text-[10px] tracking-widest uppercase py-1 z-10">
+                Entrée Principale
+              </div>
 
-              return (
-                <Draggable
-                  key={table.id}
-                  nodeRef={nodeRef}
-                  defaultPosition={{ x: table.position_x || 0, y: table.position_y || 0 }}
-                  bounds="parent"
-                  onStart={() => { draggedRef.current = false }}
-                  onDrag={() => { draggedRef.current = true }}
-                  onStop={(e, data) => handleDragStop(table, e, data)}
-                >
-                  <div
-                    ref={nodeRef}
-                    className="absolute cursor-grab active:cursor-grabbing select-none"
-                    style={{ width, height }}
-                    onClick={() => handleClickTable(table)}
+              {/* Zone Lounge */}
+              <div className="absolute bottom-12 left-8 w-48 h-52 bg-[#e3e2df] border-l-4 border-primary p-4 pointer-events-none">
+                <span className="font-headline text-sm uppercase tracking-tighter opacity-30">Zone Lounge</span>
+              </div>
+
+              {/* Terrasse */}
+              <div className="absolute bottom-4 right-4 w-72 h-48 bg-primary/5 flex flex-col items-center justify-center border-t-2 border-l-2 border-primary/20 pointer-events-none">
+                <span className="font-label text-[10px] tracking-widest uppercase opacity-50">Terrasse Casbah</span>
+              </div>
+
+              {/* Tables draggables */}
+              {tables.map((table) => {
+                const { width, height } = dimensionsTable(table.capacite)
+                const s = STYLE[table.statut] || STYLE.libre
+                const isSelected = tableSelectionnee?.id === table.id
+                const nodeRef = getNodeRef(table.id)
+
+                return (
+                  <Draggable
+                    key={table.id}
+                    nodeRef={nodeRef}
+                    defaultPosition={{ x: table.position_x || 0, y: table.position_y || 0 }}
+                    bounds="parent"
+                    onStart={() => { draggedRef.current = false }}
+                    onDrag={()  => { draggedRef.current = true  }}
+                    onStop={(e, data) => handleDragStop(table, e, data)}
                   >
                     <div
-                      className="w-full h-full rounded-lg flex flex-col items-center justify-center"
-                      style={{
-                        backgroundColor: style.bg,
-                        border: `2px solid ${isSelected ? '#000' : style.border}`,
-                        boxShadow: isSelected ? '0 0 0 3px rgba(0,0,0,0.12)' : 'none',
-                      }}
+                      ref={nodeRef}
+                      className="absolute cursor-grab active:cursor-grabbing select-none"
+                      style={{ width, height }}
+                      onClick={() => handleClickTable(table)}
                     >
-                      <span className="text-xs font-bold leading-none" style={{ color: style.text }}>
-                        {table.numero}
-                      </span>
-                      <span className="text-xs leading-none mt-1" style={{ color: style.text }}>
-                        {table.capacite}p
-                      </span>
+                      <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{
+                          backgroundColor: s.bg,
+                          border: `1px solid ${s.border}`,
+                          outline: isSelected ? `3px solid ${s.border}` : 'none',
+                          outlineOffset: '2px',
+                        }}
+                      >
+                        <span className="font-label text-[10px] font-bold" style={{ color: s.text }}>
+                          {table.numero}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </Draggable>
-              )
-            })}
-          </div>
+                  </Draggable>
+                )
+              })}
+            </div>
+          )}
+        </section>
 
-          {/* Panneau latéral — largeur fixe */}
-          <div style={{ width: 200 }} className="flex-shrink-0">
-            {tableSelectionnee ? (
-              <div className="bg-white rounded-xl shadow-sm p-5">
-                <h2 className="font-semibold mb-1">Table {tableSelectionnee.numero}</h2>
-                <p className="text-sm text-gray-400 mb-5">{tableSelectionnee.capacite} personnes</p>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Statut</p>
-                <div className="flex flex-col gap-2">
-                  {STATUTS.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => handleChangerStatut(s)}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg border transition text-left w-full"
-                      style={{
-                        backgroundColor: tableSelectionnee.statut === s ? STATUT_STYLES[s].bg : '#fff',
-                        borderColor: tableSelectionnee.statut === s ? STATUT_STYLES[s].border : '#e5e7eb',
-                      }}
-                    >
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: STATUT_STYLES[s].border }} />
-                      <span className="text-sm font-medium">{STATUT_LABELS[s]}</span>
-                    </button>
-                  ))}
+        {/* ── Panneau détail ── */}
+        <aside className="w-96 bg-surface border-l border-stone-100 flex flex-col p-8 overflow-y-auto flex-shrink-0">
+          {tableSelectionnee ? (
+            <>
+              <div className="mb-8">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className="font-label text-[10px] tracking-widest uppercase text-stone-400">Détails de la Table</span>
+                    <h3 className="font-headline text-3xl text-charcoal">{tableSelectionnee.numero}</h3>
+                  </div>
+                  <span className={`font-label text-[10px] px-3 py-1 uppercase tracking-wider font-bold ${BADGE[tableSelectionnee.statut] || 'bg-stone-100 text-stone-600'}`}>
+                    {STATUT_LABELS[tableSelectionnee.statut]}
+                  </span>
+                </div>
+
+                {/* Placeholder image */}
+                <div className="aspect-[4/3] bg-[#e9e8e4] w-full mb-6 flex items-center justify-center">
+                  <span className="font-label text-[10px] tracking-widest uppercase text-stone-400">Photo de la table</span>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Capacité</span>
+                    <span className="font-headline text-lg italic text-stone-600">{tableSelectionnee.capacite} Personnes</span>
+                  </div>
+
+                  {/* ── Réservation liée ── */}
+                  {resServation ? (
+                    <>
+                      <div className="h-px bg-stone-100" />
+                      <div className="flex flex-col gap-1">
+                        <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Client actuel</span>
+                        <span className="font-headline text-base text-charcoal">
+                          {resServation.nom} ({resServation.nb_personnes} pers.)
+                        </span>
+                        <span className="font-body text-xs text-stone-400">
+                          Arrivée : {formatHeure(resServation.heure)} — {formatDate(resServation.date)}
+                        </span>
+                      </div>
+                      {resServation.message && (
+                        <div className="flex flex-col gap-1">
+                          <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Notes</span>
+                          <p className="font-body text-xs text-stone-500 italic leading-relaxed">
+                            {resServation.message}
+                          </p>
+                        </div>
+                      )}
+                      <div className="flex flex-col gap-1">
+                        <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Contact</span>
+                        <span className="font-body text-xs text-stone-500">{resServation.email}</span>
+                        {resServation.telephone && (
+                          <span className="font-body text-xs text-stone-400">{resServation.telephone}</span>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Réservation</span>
+                      <span className="font-body text-xs text-stone-300 italic">Aucune réservation assignée</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-auto pt-8 border-t border-stone-100">
+                <h4 className="font-label text-[10px] tracking-widest uppercase text-stone-400 mb-4">Actions de Statut</h4>
+                <div className="flex flex-col gap-3">
+                  {STATUTS.map((s) => {
+                    const a = STATUT_ACTION[s]
+                    if (!a) return null
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => handleChangerStatut(s)}
+                        className={`flex items-center gap-3 px-4 py-3 font-label text-[10px] tracking-widest uppercase border transition-colors ${a.bg} ${a.text} ${a.border} hover:opacity-80`}
+                      >
+                        <div className={`w-2 h-2 rounded-full ${a.dot}`} />
+                        {a.label}
+                      </button>
+                    )
+                  })}
                 </div>
                 <button
+                  type="button"
                   onClick={() => setTableSelectionnee(null)}
-                  className="mt-5 text-xs text-gray-400 hover:text-black transition w-full text-center"
+                  className="mt-8 w-full font-label text-xs tracking-widest uppercase text-stone-500 flex items-center justify-center gap-2 py-3 border border-stone-200 hover:bg-[#e9e8e4] transition-colors"
                 >
                   Fermer
                 </button>
               </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm p-5">
-                <p className="text-sm text-gray-400 text-center leading-relaxed">
-                  Cliquez sur une table pour voir ses options.
-                </p>
-                <p className="text-xs text-gray-300 mt-3 text-center leading-relaxed">
-                  Glissez pour repositionner.
-                </p>
-              </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center gap-4">
+              <p className="font-label text-[10px] tracking-widest uppercase text-stone-400 leading-relaxed">
+                Cliquez sur une table pour voir ses options
+              </p>
+              <p className="text-[10px] text-stone-300 leading-relaxed">
+                Glissez pour repositionner
+              </p>
+            </div>
+          )}
+        </aside>
+
+      </div>
+
+      {/* ── Footer légende ── */}
+      <footer className="h-14 bg-surface border-t border-stone-100 px-10 flex items-center gap-12 flex-shrink-0">
+        {STATUTS.map((s) => {
+          const a = STATUT_ACTION[s]
+          if (!a) return null
+          return (
+            <div key={s} className="flex items-center gap-2">
+              <div className={`w-3 h-3 ${a.dot}`} />
+              <span className="font-label text-[10px] tracking-widest uppercase text-stone-500">
+                {STATUT_LABELS[s]} ({compteurs[s] || 0})
+              </span>
+            </div>
+          )
+        })}
+        <div className="ml-auto flex items-center gap-4">
+          <span className="font-label text-[10px] tracking-widest uppercase text-stone-300">
+            {tables.length} tables
+          </span>
         </div>
-      )}
+      </footer>
+
     </AdminLayout>
   )
 }

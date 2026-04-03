@@ -48,10 +48,12 @@ export default function ReservationConfirmation() {
       <main className="min-h-screen flex flex-col items-center justify-center px-6 pt-32 pb-20">
         <div className="max-w-2xl w-full text-center space-y-12">
 
-          {/* Icône check */}
+          {/* Icône horloge — en attente */}
           <div className="flex justify-center">
-            <div className="w-24 h-24 flex items-center justify-center border border-primary-container/30">
-              <span className="text-primary-container text-5xl font-light">✓</span>
+            <div className="w-24 h-24 flex items-center justify-center border border-stone-200">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#845325" strokeWidth="1" strokeLinecap="square">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
             </div>
           </div>
 
@@ -64,6 +66,18 @@ export default function ReservationConfirmation() {
               {t('confirmation.sous_titre')}
             </p>
           </div>
+
+          {/* Bandeau statut en attente */}
+          <div className="flex items-center justify-center gap-4 border border-amber-200 bg-amber-50 px-8 py-4 max-w-sm mx-auto">
+            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse flex-shrink-0" />
+            <div className="text-left">
+              <p className="font-label text-[10px] tracking-[0.2em] uppercase text-amber-700">{t('confirmation.statut_label')}</p>
+              <p className="font-body text-sm text-amber-800 font-medium">{t('confirmation.statut_valeur')}</p>
+            </div>
+          </div>
+          <p className="font-body text-xs text-stone-400 max-w-sm mx-auto leading-relaxed">
+            {t('confirmation.statut_info')}
+          </p>
 
           {/* Bloc récap */}
           <div className="bg-[#f4f4f0] p-12 text-left space-y-8 relative overflow-hidden">

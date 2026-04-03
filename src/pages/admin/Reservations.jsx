@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
 import pb from '../../lib/pocketbase'
+import { useReservationContext } from '../../context/ReservationContext'
 
 const STATUTS = ['en_attente', 'confirmee', 'annulee']
 
@@ -48,15 +49,21 @@ const IconGroup = () => (
 
 export default function Reservations() {
   const [reservations, setReservations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [filtre, setFiltre] = useState('tous')
+  const [tables, setTables]             = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [filtre, setFiltre]             = useState('tous')
   const navigate = useNavigate()
+  const { rafraichirCount } = useReservationContext()
 
   const chargerReservations = async () => {
     setLoading(true)
     try {
-      const data = await pb.collection('reservations').getFullList({ sort: '-date,-heure' })
-      setReservations(data)
+      const [resData, tablesData] = await Promise.all([
+        pb.collection('reservations').getFullList({ sort: '-date,-heure', expand: 'table' }),
+        pb.collection('tables').getFullList({ sort: 'numero' }),
+      ])
+      setReservations(resData)
+      setTables(tablesData)
     } catch (e) {
       console.error('Erreur chargement réservations:', e)
     }
@@ -71,8 +78,30 @@ export default function Reservations() {
       setReservations((prev) =>
         prev.map((r) => (r.id === id ? { ...r, statut: nouveauStatut } : r))
       )
+      // Mettre à jour le badge immédiatement
+      rafraichirCount()
     } catch (e) {
       console.error('Erreur mise à jour statut:', e)
+    }
+  }
+
+  const assignerTable = async (reservationId, tableId) => {
+    try {
+      // Trouver l'ancienne table assignée pour la libérer
+      const res = reservations.find((r) => r.id === reservationId)
+      if (res?.table && res.table !== tableId) {
+        await pb.collection('tables').update(res.table, { statut: 'libre' })
+      }
+      // Assigner la nouvelle table
+      await pb.collection('reservations').update(reservationId, { table: tableId || null })
+      // Mettre à jour le statut de la table
+      if (tableId) {
+        const statutTable = res?.statut === 'confirmee' ? 'occupee' : 'reservee'
+        await pb.collection('tables').update(tableId, { statut: statutTable })
+      }
+      chargerReservations()
+    } catch (e) {
+      console.error('Erreur assignation table:', e)
     }
   }
 
@@ -151,6 +180,7 @@ export default function Reservations() {
                 <th className="px-6 py-4 font-medium">Nom de l'invité</th>
                 <th className="px-6 py-4 font-medium">Date &amp; Heure</th>
                 <th className="px-6 py-4 font-medium">Couverts</th>
+                <th className="px-6 py-4 font-medium">Table</th>
                 <th className="px-6 py-4 font-medium">Contact</th>
                 <th className="px-6 py-4 font-medium">Statut</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
@@ -184,6 +214,26 @@ export default function Reservations() {
                       {String(r.nb_personnes).padStart(2, '0')}
                       <IconGroup />
                     </span>
+                  </td>
+
+                  {/* Table assignée */}
+                  <td className="px-6 py-6">
+                    {r.statut !== 'annulee' ? (
+                      <select
+                        value={r.table || ''}
+                        onChange={(e) => assignerTable(r.id, e.target.value)}
+                        className="border-0 border-b border-stone-200 bg-transparent text-xs font-bold text-stone-700 py-1 focus:outline-none focus:border-primary transition-colors cursor-pointer w-24"
+                      >
+                        <option value="">— Aucune</option>
+                        {tables.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.numero} ({t.capacite}p)
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-xs text-stone-300">—</span>
+                    )}
                   </td>
 
                   {/* Contact */}

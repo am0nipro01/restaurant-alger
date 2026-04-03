@@ -26,3 +26,5 @@
 | 2026-04-03 | — | Atelier 09 terminé et validé — design system "The Desert Gallery" appliqué, toutes les pages converties depuis Stitch (Home, Menu, Notre Histoire, Contact, Réservation, Confirmation), i18n FR/EN/AR complété |
 | 2026-04-03 | — | Menu : scroll+anchors retenu (abandon tabs), champ description ajouté à menu_categories PocketBase, 3 descriptions saisies |
 | 2026-04-03 | — | Fix confirmation : positionnement absolute pour éviter le chevauchement image/texte (bug `-ml-20` Stitch) |
+| 2026-04-03 | — | Hook email Resend (confirmation réservation) : **reporté** — hook PocketBase créé dans `backend/pb_hooks/reservations.pb.js`, à activer en définissant `RESEND_API_KEY` + domaine vérifié sur resend.com. À faire avant mise en production. |
+| 2026-04-03 | — | Liaison réservations ↔ tables : champ `table` (Relation → tables) ajouté dans PocketBase. Assignation depuis admin/reservations, affichage client dans plan de salle. |

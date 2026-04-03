@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useReservationContext } from '../../context/ReservationContext'
 
 // Icônes SVG inline (remplace Material Symbols)
 const IconCalendar = () => (
@@ -35,10 +36,11 @@ const navLinks = [
   { href: '/admin/plan-de-salle',label: 'Floor Plan',   icon: <IconGrid /> },
 ]
 
-export default function AdminLayout({ children }) {
+export default function AdminLayout({ children, fullHeight = false }) {
   const { logout, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { enAttenteCount } = useReservationContext()
 
   const handleLogout = () => {
     logout()
@@ -61,6 +63,8 @@ export default function AdminLayout({ children }) {
         <nav className="flex-grow space-y-1">
           {navLinks.map((link) => {
             const active = location.pathname === link.href
+            const isReservations = link.href === '/admin/reservations'
+            const showBadge = isReservations && enAttenteCount > 0
             return (
               <Link
                 key={link.href}
@@ -71,7 +75,14 @@ export default function AdminLayout({ children }) {
                     : 'text-stone-500 hover:text-charcoal hover:bg-stone-100'
                 }`}
               >
-                {link.icon}
+                <span className="relative flex-shrink-0">
+                  {link.icon}
+                  {showBadge && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                      {enAttenteCount > 99 ? '99+' : enAttenteCount}
+                    </span>
+                  )}
+                </span>
                 {link.label}
               </Link>
             )
@@ -102,7 +113,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* ── Contenu principal ── */}
-      <main className="ml-64 flex-grow min-h-screen bg-stone-100/50 p-12 overflow-y-auto">
+      <main className={`ml-64 flex-grow ${fullHeight ? 'h-screen overflow-hidden flex flex-col' : 'min-h-screen bg-stone-100/50 p-12 overflow-y-auto'}`}>
         {children}
       </main>
 

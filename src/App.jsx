@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { useRTL } from './hooks/useRTL'
+import { ReservationProvider } from './context/ReservationContext'
 
 // Pages publiques
 import Home from './pages/public/Home'
@@ -12,7 +13,6 @@ import Contact from './pages/public/Contact'
 
 // Pages admin
 import Login from './pages/admin/Login'
-import Dashboard from './pages/admin/Dashboard'
 import Reservations from './pages/admin/Reservations'
 import MenuAdmin from './pages/admin/MenuAdmin'
 import Contenu from './pages/admin/Contenu'
@@ -38,7 +38,6 @@ function AppContent() {
 
       {/* Routes admin */}
       <Route path="/admin" element={<Login />} />
-      <Route path="/admin/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/admin/reservations" element={<PrivateRoute><Reservations /></PrivateRoute>} />
       <Route path="/admin/menu" element={<PrivateRoute><MenuAdmin /></PrivateRoute>} />
       <Route path="/admin/contenu" element={<PrivateRoute><Contenu /></PrivateRoute>} />
@@ -50,7 +49,9 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <ReservationProvider>
+        <AppContent />
+      </ReservationProvider>
     </BrowserRouter>
   )
 }
