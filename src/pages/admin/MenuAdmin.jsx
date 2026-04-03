@@ -33,6 +33,8 @@ export default function MenuAdmin() {
   // Formulaires
   const [nouvelleCategorie, setNouvelleCategorie] = useState('')
   const [showAddCat, setShowAddCat] = useState(false)
+  const [erreurCat, setErreurCat]   = useState('')
+  const [erreurPlat, setErreurPlat] = useState('')
   const [platForm, setPlatForm]     = useState(platVide)
   const [platModal, setPlatModal]   = useState(null)   // null | 'add' | 'edit'
   const [editId, setEditId]         = useState(null)
@@ -57,10 +59,14 @@ export default function MenuAdmin() {
   const ajouterCategorie = async (e) => {
     e.preventDefault()
     if (!nouvelleCategorie.trim()) return
+    setErreurCat('')
     try {
       await pb.collection('menu_categories').create({ nom: nouvelleCategorie.trim(), ordre: categories.length + 1 })
       setNouvelleCategorie(''); setShowAddCat(false); charger()
-    } catch (err) { console.error(err) }
+    } catch (err) {
+      console.error(err)
+      setErreurCat(err?.message || 'Erreur lors de la création')
+    }
   }
 
   const supprimerCategorie = async (id) => {
@@ -82,6 +88,7 @@ export default function MenuAdmin() {
 
   const soumettreFormPlat = async (e) => {
     e.preventDefault()
+    setErreurPlat('')
     try {
       const data = { ...platForm, prix: parseFloat(platForm.prix) }
       if (platModal === 'add') {
@@ -90,7 +97,10 @@ export default function MenuAdmin() {
         await pb.collection('menu_items').update(editId, data)
       }
       setPlatModal(null); charger()
-    } catch (err) { console.error(err) }
+    } catch (err) {
+      console.error(err)
+      setErreurPlat(err?.message || 'Erreur lors de l\'enregistrement')
+    }
   }
 
   const supprimerPlat = async (id) => {
@@ -164,26 +174,30 @@ export default function MenuAdmin() {
               </form>
             )}
 
+            {erreurCat && (
+              <p className="text-red-500 text-xs mb-3 px-1">{erreurCat}</p>
+            )}
+
             <ul className="space-y-1">
               {categories.map((c) => (
-                <li key={c.id}>
+                <li
+                  key={c.id}
+                  className={`group flex items-center justify-between p-4 cursor-pointer transition-colors ${
+                    c.id === catActive
+                      ? 'bg-[#f4f4f0] text-primary'
+                      : 'text-stone-400 hover:bg-[#f4f4f0] hover:text-charcoal'
+                  }`}
+                  onClick={() => setCatActive(c.id)}
+                >
+                  <span className={`font-label text-xs tracking-wider uppercase ${c.id === catActive ? 'font-bold' : ''}`}>
+                    {c.nom}
+                  </span>
                   <button
-                    onClick={() => setCatActive(c.id)}
-                    className={`w-full text-left p-4 flex justify-between items-center group transition-colors ${
-                      c.id === catActive
-                        ? 'bg-[#f4f4f0] text-primary'
-                        : 'text-stone-400 hover:bg-[#f4f4f0] hover:text-charcoal'
-                    }`}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); supprimerCategorie(c.id) }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300 hover:text-red-500"
                   >
-                    <span className={`font-label text-xs tracking-wider uppercase ${c.id === catActive ? 'font-bold' : ''}`}>
-                      {c.nom}
-                    </span>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); supprimerCategorie(c.id) }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300 hover:text-red-500"
-                    >
-                      <IconDelete />
-                    </button>
+                    <IconDelete />
                   </button>
                 </li>
               ))}
@@ -368,6 +382,10 @@ export default function MenuAdmin() {
                   </span>
                 </label>
               </div>
+
+              {erreurPlat && (
+                <p className="text-red-500 text-xs text-center">{erreurPlat}</p>
+              )}
 
               <button type="submit"
                 className="w-full bg-primary text-white py-4 font-label text-[11px] tracking-[0.2em] uppercase hover:bg-primary-container transition-colors duration-300">
