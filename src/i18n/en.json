@@ -31,10 +31,12 @@
   "menu": {
     "titre": "Our Menu",
     "sous_titre": "Traditional and gastronomic Algerian cuisine",
+    "hero_sous_titre": "An immersion into Algeria's terroirs",
+    "citation": "Algerian cuisine is not just a recipe — it is a memory to be savoured.",
     "vide": "No dishes available in this category.",
     "chargement": "Loading menu...",
     "indisponible": "The menu is not yet available.",
-    "footer": "The menu may change with the seasons."
+    "footer": "The menu may evolve with the seasons and market arrivals."
   },
   "reservation": {
     "titre": "Reservation",

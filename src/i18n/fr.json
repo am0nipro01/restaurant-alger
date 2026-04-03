@@ -31,10 +31,12 @@
   "menu": {
     "titre": "Notre Carte",
     "sous_titre": "Cuisine algérienne traditionnelle et gastronomique",
+    "hero_sous_titre": "Une immersion dans les terroirs d'Algérie",
+    "citation": "La cuisine algérienne n'est pas qu'une recette, c'est une mémoire qui se déguste.",
     "vide": "Aucun plat disponible dans cette catégorie.",
     "chargement": "Chargement du menu...",
     "indisponible": "Le menu n'est pas encore disponible.",
-    "footer": "La carte peut évoluer selon les saisons et les arrivages."
+    "footer": "La carte peut évoluer selon les saisons et les arrivages du marché."
   },
   "reservation": {
     "titre": "Réservation",
