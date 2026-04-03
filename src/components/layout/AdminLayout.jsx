@@ -1,16 +1,42 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
+// Icônes SVG inline (remplace Material Symbols)
+const IconCalendar = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <rect x="3" y="4" width="18" height="18"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+)
+const IconMenu = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+  </svg>
+)
+const IconEdit = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  </svg>
+)
+const IconGrid = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+  </svg>
+)
+const IconLogout = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+)
+
 const navLinks = [
-  { href: '/admin/dashboard', label: 'Accueil' },
-  { href: '/admin/reservations', label: 'Réservations' },
-  { href: '/admin/menu', label: 'Menu' },
-  { href: '/admin/contenu', label: 'Contenu' },
-  { href: '/admin/plan-de-salle', label: 'Plan de salle' },
+  { href: '/admin/reservations', label: 'Reservations', icon: <IconCalendar /> },
+  { href: '/admin/menu',         label: 'Menu',         icon: <IconMenu /> },
+  { href: '/admin/contenu',      label: 'Content',      icon: <IconEdit /> },
+  { href: '/admin/plan-de-salle',label: 'Floor Plan',   icon: <IconGrid /> },
 ]
 
 export default function AdminLayout({ children }) {
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -20,39 +46,66 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Barre de navigation admin */}
-      <header className="bg-white border-b px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <span className="font-semibold text-sm tracking-wide">Admin</span>
-          <nav className="flex gap-4">
-            {navLinks.map((link) => (
+    <div className="flex min-h-screen overflow-hidden font-body">
+
+      {/* ── Sidebar fixe ── */}
+      <aside className="h-screen w-64 fixed left-0 top-0 bg-surface flex flex-col p-8 z-30 border-r border-stone-100">
+
+        {/* Logo */}
+        <div className="mb-12">
+          <h1 className="font-headline text-base text-charcoal tracking-tight">ALGIERS GASTRONOMY</h1>
+          <p className="font-label text-[10px] tracking-[0.2em] uppercase text-stone-400 mt-1">Editorial Dashboard</p>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-grow space-y-1">
+          {navLinks.map((link) => {
+            const active = location.pathname === link.href
+            return (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`text-sm transition ${
-                  location.pathname === link.href
-                    ? 'text-black font-medium'
-                    : 'text-gray-400 hover:text-black'
+                className={`flex items-center gap-4 px-4 py-3 text-xs font-bold tracking-widest uppercase transition-all duration-200 ${
+                  active
+                    ? 'text-primary bg-primary/10'
+                    : 'text-stone-500 hover:text-charcoal hover:bg-stone-100'
                 }`}
               >
+                {link.icon}
                 {link.label}
               </Link>
-            ))}
-          </nav>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-gray-400 hover:text-black transition"
-        >
-          Se déconnecter
-        </button>
-      </header>
+            )
+          })}
+        </nav>
 
-      {/* Contenu de la page */}
-      <main className="flex-1 p-8 max-w-5xl mx-auto w-full">
+        {/* Profil + Logout */}
+        <div className="mt-auto">
+          <div className="flex items-center gap-3 px-4 py-6 mb-2 border-t border-stone-200/50">
+            <div className="w-8 h-8 bg-stone-200 flex-shrink-0 overflow-hidden">
+              <div className="w-full h-full bg-[#e9e8e4] flex items-center justify-center text-stone-400 text-xs font-bold">
+                {user?.email?.[0]?.toUpperCase() ?? 'A'}
+              </div>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-wider truncate">Admin</p>
+              <p className="text-[9px] text-stone-400 uppercase tracking-widest">{user?.email ?? 'admin'}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-4 w-full px-4 py-3 text-xs font-bold tracking-widest uppercase text-stone-500 hover:text-charcoal hover:bg-stone-100 transition-all duration-200"
+          >
+            <IconLogout />
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Contenu principal ── */}
+      <main className="ml-64 flex-grow min-h-screen bg-stone-100/50 p-12 overflow-y-auto">
         {children}
       </main>
+
     </div>
   )
 }
