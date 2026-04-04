@@ -102,7 +102,7 @@ export default function AccesGerantModal() {
           <div className="border-t border-stone-100 pt-5">
             <p className="font-label text-[9px] tracking-widest uppercase text-stone-300 mb-3">Accès direct</p>
             <a
-              href="https://restaurant-alger-preview.netlify.app/admin"
+              href="https://restaurant-alger.netlify.app/admin/reservations"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-primary text-white font-label text-[10px] tracking-[0.2em] uppercase px-8 py-3 hover:bg-primary-container transition-colors duration-300"
