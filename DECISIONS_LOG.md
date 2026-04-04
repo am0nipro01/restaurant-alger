@@ -35,3 +35,4 @@
 | 2026-04-04 | — | Questionnaire gérant créé : `docs/questionnaire-gerant.md` — 11 sections (identité, adresse, horaires, capacité, réservation, menu, équipe, visuels, pratique, textes, technique). À transmettre au gérant. |
 | 2026-04-04 | — | Subscription PocketBase temps réel activée sur admin/reservations — données live sans rechargement, bouton Actualiser ajouté, erreur silencieuse au chargement auto (visible uniquement sur refresh manuel). |
 | 2026-04-04 | — | Atelier 10 terminé et validé — séparation rôles admin/manager : collection `managers` (auth PocketBase), login cascade, sidebar filtrée, routes protégées. Fix hook reservations.pb.js (onRecordAfterUpdateRequest → onRecordAfterUpdateSuccess). |
+| 2026-04-04 | — | API Rules reservations + tables : accès lecture/écriture ouvert aux managers (`@request.auth.collectionName = "managers"`). Suppression et création restent superadmin uniquement. |
