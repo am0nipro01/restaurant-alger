@@ -51,6 +51,15 @@ export default function Home() {
             </Link>
           </div>
         </div>
+
+        {/* Scroll hint — desktop et tablette uniquement */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 animate-bounce">
+          <span className="font-label text-[9px] tracking-[0.3em] uppercase text-white/50">Scroll</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+
       </section>
 
       {/* ── Stats bar ── */}

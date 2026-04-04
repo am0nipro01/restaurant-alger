@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import { useRTL } from './hooks/useRTL'
 import { ReservationProvider } from './context/ReservationContext'
+import ScrollToTop from './components/ScrollToTop'
+import BackToTop from './components/BackToTop'
 
 // Pages publiques
 import Home from './pages/public/Home'
@@ -36,7 +38,10 @@ function AdminOnlyRoute({ children }) {
 function AppContent() {
   useRTL() // applique dir="rtl" et lang sur <html> automatiquement
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <BackToTop />
+      <Routes>
       {/* Routes publiques */}
       <Route path="/" element={<Home />} />
       <Route path="/menu" element={<Menu />} />
@@ -53,6 +58,7 @@ function AppContent() {
       <Route path="/admin/plan-de-salle" element={<PrivateRoute><PlanDeSalle /></PrivateRoute>} />
       <Route path="/admin/contact" element={<AdminOnlyRoute><AdminContact /></AdminOnlyRoute>} />
     </Routes>
+    </>
   )
 }
 
