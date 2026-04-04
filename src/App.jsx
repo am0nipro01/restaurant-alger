@@ -17,6 +17,7 @@ import Reservations from './pages/admin/Reservations'
 import MenuAdmin from './pages/admin/MenuAdmin'
 import Contenu from './pages/admin/Contenu'
 import PlanDeSalle from './pages/admin/PlanDeSalle'
+import AdminContact from './pages/admin/AdminContact'
 
 // Protection des routes admin — branché sur PocketBase
 function PrivateRoute({ children }) {
@@ -42,6 +43,7 @@ function AppContent() {
       <Route path="/admin/menu" element={<PrivateRoute><MenuAdmin /></PrivateRoute>} />
       <Route path="/admin/contenu" element={<PrivateRoute><Contenu /></PrivateRoute>} />
       <Route path="/admin/plan-de-salle" element={<PrivateRoute><PlanDeSalle /></PrivateRoute>} />
+      <Route path="/admin/contact" element={<PrivateRoute><AdminContact /></PrivateRoute>} />
     </Routes>
   )
 }
