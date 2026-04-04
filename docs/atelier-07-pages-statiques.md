@@ -29,16 +29,16 @@ Créer les pages statiques du site : accueil, histoire du restaurant, présentat
 - PublicLayout ajouté sur Menu, Reservation, ReservationConfirmation
 
 ## Reste à faire
-- [ ] **Atelier 04 — refacto Contenu.jsx** : maintenant que les sections sont définies,
-  mettre à jour l'éditeur admin pour gérer les sections indépendamment
-  (histoire / equipe / contact, avec champs titre + contenu par section)
+- [x] **Atelier 04 — refacto Contenu.jsx** ✅ (2026-04-04 session 2)
 - [x] Intégration design system final (Atelier 09) ✅
 - [x] Branchement Contact public → site_config PocketBase ✅ (2026-04-04)
-  - Contact.jsx charge adresse, ville, téléphone, horaires, infos pratiques, réseaux, Google Maps depuis PocketBase
-  - Fallback silencieux sur i18n si champ vide ou PocketBase indisponible
-  - DEBUG_MODE utilisé pendant validation, retiré après validation gérant
+- [x] Branchement Notre Histoire public → pages_contenu PocketBase ✅ (2026-04-04 session 2)
+  - NotreHistoire.jsx utilise `usePageContenu('histoire')` avec fallback i18n par champ
+  - Structure JSON : hero_label, hero_titre, intro_citation, intro_p1/p2, modernite_titre, modernite_p1/p2, collectif_label/titre/desc, membres[], cta_titre/desc/btn
+  - [x] SEO complet ✅ (2026-04-04 session 2) — meta tags, Open Graph, Twitter Cards, JSON-LD Restaurant, robots.txt, sitemap.xml, hreflang FR/EN/AR
+  - [x] `docs/todo-avant-mise-en-prod.md` créé — checklist complète avant déploiement
 
 ## Questions ouvertes
 - Adresse précise du restaurant (affiché "à confirmer" pour l'instant)
-- Nom définitif du restaurant (affiché "Restaurant Alger" provisoirement)
-- Notre Histoire et page Menu publique : branchement depuis site_config non fait (pas demandé)
+- Nom définitif du restaurant (affiché "Algiers Gastronomy" provisoirement)
+- OG image réelle à fournir (`public/og-image.jpg`, 1200×630px)

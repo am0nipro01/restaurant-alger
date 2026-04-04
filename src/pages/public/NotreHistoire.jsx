@@ -2,14 +2,15 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import PublicLayout from '../../components/layout/PublicLayout'
 import PageSEO from '../../components/seo/PageSEO'
+import { usePageContenu } from '../../hooks/usePageContenu'
 
 // TODO: remplacer par les vraies photos du restaurant
 const IMG_HERO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJ-0g7K7beNtSDfAJ6uVAeJewfySOHdLsb2pkJrdHi9KctI2UGY9YksQXiCF4fFE5YP8VV6d1La68MlA25hQwRiCM0BancOyK0YaKdL4dXUE98cXWJLkPrrrlaCl59l6q2kZYe_IelLdp6A_q-eVh1WFWMKzMVEvF_MqXWmdFGKRQLPI0zaN_bivwuXNqjRTsTmGRU9-6sn30wrDTQapBLSF0ckXqgeAxjPdobqKnX_elZcUxa8PJ0ooDtONfGtxLw40_Nt4B56KVQ'
 const IMG_INTERIOR = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAx399d3NoTwMRQ47ePXVE0M4UxS0pMFKLBqXKWKxevh_d22L6LfzbHakCBn-kRKbSu0K5CnlEsQ4_2Q-cAeW70lwej_foR2giWCqKh6l0CgqszgmjvW6Sh963etvu34l88byvXi03R_C5ZyuisIu5Af1VpXcJTNo5UlyiBhln6X499hEZk6xmjD5ntp2JJGUwIxb3Yxljy2ugWZghrvqBbKM5DcNAiMn3K4baEENALlpPuYbKFbjMP-kRMscfVfLIc3_-jpyJJe0mE'
 const IMG_CHEF_HANDS = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCuUIwRX61fURzwRYAeejy0kgnlD0DjlHKlH8jYZLSgT4fbSMsygmyRkNJE7urLxL2H1g0cGBHSUfbTxwv8zMZnj35uqGj8Mz9DZL83nTFrEVz2sU65zJUQv5Ey0jQb8krqhKi_qCYY1cXlXwJXmhAI4mURmas662Cgtacjnbxhd1R3df14-hnHCSkAfmhEXnuJsjIXvxAS6zvk4B_Sa9l7Mst9hLngc5c_5H6EkbmfydEnzT0V5MiGcfgjdj2BQvd8LtpTKVVF3pLW'
 
-// TODO: remplacer par les vraies photos de l'équipe
-const TEAM = [
+// Équipe par défaut (affiché si aucun membre n'est renseigné dans l'admin)
+const TEAM_FALLBACK = [
   {
     img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCuyyD6sHgEK4wMkp3VSAVtdsrpWrXcs_A_XSFE6GAEMCrHWhb-fC6Ub793q9gwWhxBm5K8CeFLrinpOOxbd4vDWsabMaV-uWHaVYl2whwwNILTYMnUIXqwAwn-vJfuN1mFyYrbf_m6BTU8yv8NwYI0_WcL3hBjL2Gj8RIS64C_cCvXUFBNwk-1WAuzDo_mhQOViw7tsUnqZGMlG3o0LgQRnuldTJmh2y-qjchpP7U-7I0bXMJysyMKJxDkKjOgGehEpMc0bBFB6id-',
     nom: 'Yasmine Amara',
@@ -33,8 +34,21 @@ const TEAM = [
   },
 ]
 
+// Offsets visuels pour la grille décalée
+const OFFSETS = ['', 'md:mt-16', 'md:mt-32']
+
 export default function NotreHistoire() {
   const { t } = useTranslation()
+  const hist = usePageContenu('histoire')
+
+  // v(pbKey, i18nSuffix) → valeur PocketBase si disponible, sinon i18n
+  const v = (pbKey, i18nSuffix) =>
+    hist !== null && hist[pbKey] ? hist[pbKey] : t('histoire.' + i18nSuffix)
+
+  // Équipe : PocketBase si définie, sinon fallback hardcodé
+  const membres = hist !== null && hist.membres?.length > 0
+    ? hist.membres
+    : TEAM_FALLBACK
 
   return (
     <PublicLayout>
@@ -45,10 +59,10 @@ export default function NotreHistoire() {
         <div className="absolute inset-0 z-0 opacity-10 bg-gradient-to-b from-primary to-transparent" />
         <div className="z-10 text-center space-y-6 max-w-4xl px-6">
           <span className="block font-label text-primary tracking-[0.4em] uppercase text-xs opacity-80 mb-4">
-            {t('histoire.heritage_label')}
+            {v('hero_label', 'heritage_label')}
           </span>
           <h1 className="font-headline text-7xl md:text-9xl text-charcoal -tracking-[0.03em] leading-none">
-            {t('histoire.titre')}
+            {v('hero_titre', 'titre')}
           </h1>
           <div className="w-px h-24 bg-primary/30 mx-auto mt-12" />
         </div>
@@ -69,14 +83,14 @@ export default function NotreHistoire() {
           {/* Citation asymétrique gauche */}
           <div className="md:col-start-2 md:col-span-5">
             <p className="font-headline text-3xl md:text-5xl leading-tight text-stone-600">
-              {t('histoire.intro_citation')}
+              {v('intro_citation', 'intro_citation')}
             </p>
           </div>
 
           {/* Texte corps droite */}
           <div className="md:col-start-8 md:col-span-4 space-y-8 font-body text-lg leading-relaxed text-stone-500 font-light">
-            <p>{t('histoire.intro_p1')}</p>
-            <p>{t('histoire.intro_p2')}</p>
+            <p>{v('intro_p1', 'intro_p1')}</p>
+            <p>{v('intro_p2', 'intro_p2')}</p>
           </div>
 
           {/* Grille 2 images pleine largeur */}
@@ -102,11 +116,11 @@ export default function NotreHistoire() {
           {/* L'Essence de la Modernité */}
           <div className="md:col-start-4 md:col-span-6 mt-32 space-y-12">
             <h3 className="font-headline text-4xl text-charcoal">
-              {t('histoire.modernite_titre')}
+              {v('modernite_titre', 'modernite_titre')}
             </h3>
             <div className="space-y-6 text-stone-500 leading-relaxed text-lg font-body font-light">
-              <p>{t('histoire.modernite_p1')}</p>
-              <p>{t('histoire.modernite_p2')}</p>
+              <p>{v('modernite_p1', 'modernite_p1')}</p>
+              <p>{v('modernite_p2', 'modernite_p2')}</p>
             </div>
           </div>
 
@@ -120,28 +134,36 @@ export default function NotreHistoire() {
           <div className="flex flex-col md:flex-row justify-between items-baseline mb-24 gap-6">
             <div className="space-y-4">
               <span className="block font-label text-primary tracking-[0.3em] uppercase text-[10px]">
-                {t('histoire.collectif_label')}
+                {v('collectif_label', 'collectif_label')}
               </span>
               <h2 className="font-headline text-5xl md:text-7xl text-charcoal">
-                {t('histoire.collectif_titre')}
+                {v('collectif_titre', 'collectif_titre')}
               </h2>
             </div>
             <div className="max-w-md">
               <p className="font-body text-stone-500 leading-relaxed">
-                {t('histoire.collectif_desc')}
+                {v('collectif_desc', 'collectif_desc')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-24">
-            {TEAM.map((membre) => (
-              <div key={membre.nom} className={`space-y-8 ${membre.offset}`}>
+            {membres.map((membre, i) => (
+              <div key={membre.nom || i} className={`space-y-8 ${membre.offset || OFFSETS[i] || ''}`}>
                 <div className="aspect-square bg-[#e3e2df] overflow-hidden">
-                  <img
-                    src={membre.img}
-                    alt={membre.nom}
-                    className="w-full h-full object-cover grayscale"
-                  />
+                  {membre.img ? (
+                    <img
+                      src={membre.img}
+                      alt={membre.nom}
+                      className="w-full h-full object-cover grayscale"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="font-headline text-5xl text-stone-400">
+                        {membre.nom?.[0]?.toUpperCase() ?? ''}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-headline text-2xl">{membre.nom}</h4>
@@ -165,17 +187,17 @@ export default function NotreHistoire() {
         </div>
         <div className="relative z-10 max-w-2xl mx-auto space-y-12">
           <h2 className="font-headline text-5xl md:text-7xl leading-tight">
-            {t('histoire.cta_titre')}
+            {v('cta_titre', 'cta_titre')}
           </h2>
           <p className="font-body text-lg text-stone-400 font-light">
-            {t('histoire.cta_desc')}
+            {v('cta_desc', 'cta_desc')}
           </p>
           <div className="pt-8">
             <Link
               to="/reservation"
               className="inline-block bg-primary text-white px-16 py-6 font-label tracking-widest uppercase text-sm hover:bg-primary-container transition-all duration-500"
             >
-              {t('histoire.cta_btn')}
+              {v('cta_btn', 'cta_btn')}
             </Link>
           </div>
         </div>

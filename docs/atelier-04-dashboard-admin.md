@@ -32,11 +32,17 @@ Mettre en place le dashboard admin pour les gérants : gestion des réservations
 - [x] Fix Promise.all → fetches indépendants (Reservations + PlanDeSalle)
 - [x] Branchement Contact public depuis site_config
 
+## Extensions réalisées (2026-04-04 — session 2)
+- [x] **Refacto complète `Contenu.jsx`** — éditeur 4 sections (Hero / Éditoriale / Équipe / CTA), sélecteur FR/EN/AR, membres dynamiques (ajout/suppression), sauvegarde JSON dans `contenu_json`
+- [x] NotreHistoire.jsx branché sur PocketBase via `usePageContenu('histoire')` + fallback i18n par champ
+- [x] Hook `usePageContenu.js` créé — fetch par page+langue, retourne null/{}/ données
+- [x] Schema PocketBase `pages_contenu` corrigé : `titre` non-requis, champ `contenu_json` (type json) ajouté, `autogeneratePattern` restauré sur champ `id`
+- [x] API Rules `pages_contenu` : list/view public, create/update/delete `@request.auth.id != ""`
+- [x] Bouton "Voir le site" ajouté dans AdminLayout (sidebar, au-dessus de la nav)
+- [x] `.claude/launch.json` créé — configurations des 2 serveurs (Vite + PocketBase)
+
 ## Reste à faire
-- [ ] Éditeur rich text pour le contenu (si besoin, actuellement textarea simple)
-- [ ] **Refactoriser `Contenu.jsx`** — sections par page indépendantes (histoire / equipe / contact). Reporté après maquettes validées.
-- [ ] Séparation droits admin / manager (optionnel, noté pour plus tard)
+- [ ] Éditeur rich text pour le contenu (si besoin — actuellement textarea simple, suffisant)
 
 ## Questions ouvertes
-- Sections définitives de Notre Histoire et Contact ? (bloqué par contenu réel gérant)
 - Questionnaire gérant transmis ? Réponses reçues ?
