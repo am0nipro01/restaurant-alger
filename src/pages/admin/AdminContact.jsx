@@ -99,7 +99,7 @@ export default function AdminContact() {
     <AdminLayout>
 
       {/* ── Header ── */}
-      <header className="flex justify-between items-end mb-12">
+      <header className="flex justify-between items-end mb-12 max-w-4xl mx-auto">
         <div>
           <h2 className="font-headline text-4xl text-charcoal tracking-tight">Informations du Restaurant</h2>
           <p className="font-body text-stone-500 mt-2 text-sm">
@@ -126,7 +126,7 @@ export default function AdminContact() {
       {loading ? (
         <div className="text-stone-400 text-sm tracking-widest uppercase text-center py-24">Chargement…</div>
       ) : (
-        <div className="space-y-12 max-w-4xl">
+        <div className="space-y-12 max-w-4xl mx-auto">
 
           {/* ── Section 1 : Identité ── */}
           <section className="bg-white p-10">
@@ -280,11 +280,11 @@ export default function AdminContact() {
           </section>
 
           {/* Bouton bas de page */}
-          <div className="flex justify-end pb-12">
+          <div className="flex justify-end pb-12 max-w-4xl mx-auto">
             <button
               onClick={sauvegarder}
               disabled={saving}
-              className="bg-charcoal text-white px-14 py-4 font-label text-[11px] tracking-[0.2em] uppercase hover:bg-stone-800 transition-colors duration-300 disabled:opacity-50"
+              className="bg-charcoal text-white px-14 py-4 font-label text-[11px] tracking-[0.2em] uppercase hover:bg-stone-800 transition-colors duration-300 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
               {saving ? 'Enregistrement…' : 'Publier les informations'}
             </button>
