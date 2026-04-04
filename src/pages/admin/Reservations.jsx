@@ -376,14 +376,16 @@ export default function Reservations() {
   const chargerReservations = async () => {
     setLoading(true)
     try {
-      const [resData, tablesData] = await Promise.all([
-        pb.collection('reservations').getFullList({ sort: '-date,-heure', expand: 'table' }),
-        pb.collection('tables').getFullList({ sort: 'numero' }),
-      ])
+      const resData = await pb.collection('reservations').getFullList({ sort: '-date,-heure', expand: 'table' })
       setReservations(resData)
+    } catch (e) {
+      console.error('[Reservations] Erreur fetch réservations:', e)
+    }
+    try {
+      const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
       setTables(tablesData)
     } catch (e) {
-      console.error('Erreur chargement réservations:', e)
+      console.error('[Reservations] Erreur fetch tables:', e)
     }
     setLoading(false)
   }
