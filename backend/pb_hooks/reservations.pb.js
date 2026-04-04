@@ -140,7 +140,7 @@ function envoyerEmailConfirmation(reservation) {
 // Après chaque mise à jour d'une réservation :
 // si le statut passe à "confirmee", envoyer l'email
 
-onRecordAfterUpdateRequest((e) => {
+onRecordAfterUpdateSuccess((e) => {
   const record    = e.record
   const ancienStatut = e.record.original().get("statut")
   const nouveauStatut = record.get("statut")

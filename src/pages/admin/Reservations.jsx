@@ -368,18 +368,24 @@ export default function Reservations() {
   const [reservations, setReservations] = useState([])
   const [tables, setTables]             = useState([])
   const [loading, setLoading]           = useState(true)
+  const [erreur, setErreur]             = useState(false)
   const [filtre, setFiltre]             = useState('tous')
   const [vue, setVue]                   = useState('liste') // 'liste' | 'calendrier'
   const navigate = useNavigate()
   const { rafraichirCount } = useReservationContext()
 
-  const chargerReservations = async () => {
+  // afficherErreur=false pour le chargement auto (Strict Mode double-invocation)
+  // afficherErreur=true uniquement pour le rafraîchissement manuel
+  const chargerReservations = async ({ afficherErreur = true } = {}) => {
     setLoading(true)
+    setErreur(false)
+    let ok = true
     try {
       const resData = await pb.collection('reservations').getFullList({ sort: '-date,-heure', expand: 'table' })
       setReservations(resData)
     } catch (e) {
       console.error('[Reservations] Erreur fetch réservations:', e)
+      ok = false
     }
     try {
       const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
@@ -387,10 +393,47 @@ export default function Reservations() {
     } catch (e) {
       console.error('[Reservations] Erreur fetch tables:', e)
     }
+    if (afficherErreur && !ok) setErreur(true)
     setLoading(false)
   }
 
-  useEffect(() => { chargerReservations() }, [])
+  useEffect(() => {
+    let cancelled = false
+    let unsubFn   = null
+
+    const init = async () => {
+      await chargerReservations({ afficherErreur: false })
+      if (cancelled) return
+
+      try {
+        unsubFn = await pb.collection('reservations').subscribe('*', (e) => {
+          if (e.action === 'create') {
+            setReservations(prev =>
+              [e.record, ...prev].sort((a, b) => {
+                const d = (b.date || '').localeCompare(a.date || '')
+                return d !== 0 ? d : (b.heure || '').localeCompare(a.heure || '')
+              })
+            )
+          } else if (e.action === 'update') {
+            setReservations(prev => prev.map(r => r.id === e.record.id ? e.record : r))
+          } else if (e.action === 'delete') {
+            setReservations(prev => prev.filter(r => r.id !== e.record.id))
+          }
+          rafraichirCount()
+        })
+      } catch (err) {
+        console.error('[Reservations] Subscription temps réel:', err)
+      }
+    }
+
+    init()
+
+    return () => {
+      cancelled = true
+      if (unsubFn) unsubFn()
+      else pb.collection('reservations').unsubscribe('*').catch(() => {})
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const changerStatut = async (id, nouveauStatut) => {
     try {
@@ -472,6 +515,14 @@ export default function Reservations() {
             </button>
           </div>
           <button
+            onClick={() => chargerReservations({ afficherErreur: true })}
+            disabled={loading}
+            title="Actualiser"
+            className="p-2.5 border border-stone-200 text-stone-400 hover:text-charcoal hover:border-stone-400 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <IconHistory />
+          </button>
+          <button
             onClick={() => navigate('/reservation')}
             className="bg-primary text-white px-8 py-3 text-xs font-bold tracking-widest uppercase hover:bg-primary-container transition-all duration-300 cursor-pointer"
           >
@@ -483,6 +534,16 @@ export default function Reservations() {
       {loading ? (
         <div className="bg-white p-12 text-center text-stone-400 text-sm tracking-widest uppercase">
           Chargement…
+        </div>
+      ) : erreur ? (
+        <div className="bg-white p-12 text-center">
+          <p className="text-stone-400 text-sm tracking-widest uppercase mb-4">Erreur de chargement</p>
+          <button
+            onClick={() => chargerReservations({ afficherErreur: true })}
+            className="text-xs font-bold tracking-widest uppercase text-primary border border-primary px-6 py-2 hover:bg-primary hover:text-white transition-all cursor-pointer"
+          >
+            Réessayer
+          </button>
         </div>
       ) : vue === 'calendrier' ? (
 

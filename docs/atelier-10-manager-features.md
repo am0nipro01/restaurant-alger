@@ -1,6 +1,6 @@
 # Atelier 10 — Fonctionnalités Manager
 
-## Statut : Non commencé
+## Statut : Terminé (2026-04-04)
 
 ## Objectif
 Répondre aux demandes du gérant transmises lors de la session du 2026-04-02 :
@@ -17,35 +17,29 @@ Elles ne touchent pas au site public.
 ---
 
 ## Décisions prises
-(vide — atelier non commencé)
+- Collection `managers` (type auth PocketBase) pour les comptes gérants — séparée des superadmins
+- Login cascade : admin PocketBase d'abord, puis collection managers si échec
+- Rôle détecté via `pb.authStore.model?.collectionName === 'managers'`
+- Managers : accès Reservations + Floor Plan uniquement
+- Admins : accès total (toutes les pages)
+- Routes admin-only protégées par `AdminOnlyRoute` (Menu, Content, Contact)
+- Fix hook `reservations.pb.js` : `onRecordAfterUpdateRequest` → `onRecordAfterUpdateSuccess` (PocketBase 0.36.x)
 
 ---
 
 ## Travail réalisé
-(vide)
+- `backend/pb_migrations/1775380000_created_managers.js` — collection `managers` (auth) avec champ `nom`
+- `src/hooks/useAuth.js` — login cascade + détection rôle + exposition `role` dans le hook
+- `src/App.jsx` — composant `AdminOnlyRoute` : redirige les managers vers /admin/reservations
+- `src/components/layout/AdminLayout.jsx` — sidebar filtrée par rôle, label "Manager"/"Admin" dans le profil
+- `backend/pb_hooks/reservations.pb.js` — fix hook PocketBase 0.36.x
 
 ---
 
 ## Reste à faire
+Rien — atelier terminé.
 
-### 1. Vue calendrier des réservations
-- Affichage des réservations par jour/semaine dans l'admin
-- Sélecteur de date → liste des réservations du jour
-- Indicateurs visuels : créneaux pleins vs disponibles
-
-### 2. Plan de salle lié aux réservations
-- Sur le plan de salle existant, afficher les tables réservées pour un créneau donné
-- Sélecteur date+heure → coloration des tables (libre / réservé / en cours)
-- Possibilité d'assigner une réservation à une table spécifique
-
-### 3. Séparation droits admin / manager
-- **Admin** : accès total (toutes collections, création d'utilisateurs)
-- **Manager** : accès restreint (uniquement réservations + plan de salle + consultation menu)
-- À implémenter via les rôles PocketBase (champ `role` sur `users`) + guards côté frontend
-
----
+Les points 1 (vue calendrier) et 2 (plan de salle lié) avaient été réalisés lors des sessions précédentes.
 
 ## Questions ouvertes
-- Le gérant veut-il un accès mobile optimisé pour le calendrier (tablette en salle) ?
-- Faut-il une vue "service du soir" pré-filtrée automatiquement ?
-- La séparation admin/manager se fait-il via PocketBase API Rules ou guard frontend ?
+(vide)

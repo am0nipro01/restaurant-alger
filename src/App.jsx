@@ -25,6 +25,14 @@ function PrivateRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/admin" replace />
 }
 
+// Routes accessibles uniquement aux admins (pas aux managers)
+function AdminOnlyRoute({ children }) {
+  const { isAuthenticated, role } = useAuth()
+  if (!isAuthenticated) return <Navigate to="/admin" replace />
+  if (role === 'manager') return <Navigate to="/admin/reservations" replace />
+  return children
+}
+
 function AppContent() {
   useRTL() // applique dir="rtl" et lang sur <html> automatiquement
   return (
@@ -40,10 +48,10 @@ function AppContent() {
       {/* Routes admin */}
       <Route path="/admin" element={<Login />} />
       <Route path="/admin/reservations" element={<PrivateRoute><Reservations /></PrivateRoute>} />
-      <Route path="/admin/menu" element={<PrivateRoute><MenuAdmin /></PrivateRoute>} />
-      <Route path="/admin/contenu" element={<PrivateRoute><Contenu /></PrivateRoute>} />
+      <Route path="/admin/menu" element={<AdminOnlyRoute><MenuAdmin /></AdminOnlyRoute>} />
+      <Route path="/admin/contenu" element={<AdminOnlyRoute><Contenu /></AdminOnlyRoute>} />
       <Route path="/admin/plan-de-salle" element={<PrivateRoute><PlanDeSalle /></PrivateRoute>} />
-      <Route path="/admin/contact" element={<PrivateRoute><AdminContact /></PrivateRoute>} />
+      <Route path="/admin/contact" element={<AdminOnlyRoute><AdminContact /></AdminOnlyRoute>} />
     </Routes>
   )
 }

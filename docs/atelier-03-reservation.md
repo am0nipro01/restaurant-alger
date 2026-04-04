@@ -1,6 +1,6 @@
 # Atelier 03 — Réservation
 
-## Statut : Terminé
+## Statut : Terminé (mis à jour 2026-04-04)
 
 ## Objectif
 Implémenter le système de réservation en ligne : formulaire, gestion des créneaux horaires, gestion de la capacité, et confirmation par email (sans paiement ni acompte).
@@ -16,6 +16,7 @@ Implémenter le système de réservation en ligne : formulaire, gestion des cré
 ## Travail réalisé
 - `src/lib/reservations.js` — logique métier : génération créneaux, vérification capacité, création réservation
 - `src/pages/public/Reservation.jsx` — formulaire complet avec validation, gestion des états (chargement, succès, erreur), écran de confirmation
+- `src/pages/admin/Reservations.jsx` — subscription PocketBase temps réel : create/update/delete appliqués en live sur la liste sans rechargement. Bouton Actualiser ajouté. Gestion erreur silencieuse au chargement auto, visible uniquement sur rafraîchissement manuel.
 
 ## Reste à faire
 - [ ] Brancher Resend pour l'envoi d'email de confirmation (quand domaine .dz disponible)

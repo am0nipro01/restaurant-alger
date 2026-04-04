@@ -35,15 +35,15 @@ const IconPhone = () => (
 )
 
 const navLinks = [
-  { href: '/admin/reservations', label: 'Reservations', icon: <IconCalendar /> },
-  { href: '/admin/menu',         label: 'Menu',         icon: <IconMenu /> },
-  { href: '/admin/contenu',      label: 'Content',      icon: <IconEdit /> },
-  { href: '/admin/plan-de-salle',label: 'Floor Plan',   icon: <IconGrid /> },
-  { href: '/admin/contact',      label: 'Contact',      icon: <IconPhone /> },
+  { href: '/admin/reservations', label: 'Reservations', icon: <IconCalendar />, roles: ['admin', 'manager'] },
+  { href: '/admin/menu',         label: 'Menu',         icon: <IconMenu />,     roles: ['admin'] },
+  { href: '/admin/contenu',      label: 'Content',      icon: <IconEdit />,     roles: ['admin'] },
+  { href: '/admin/plan-de-salle',label: 'Floor Plan',   icon: <IconGrid />,     roles: ['admin', 'manager'] },
+  { href: '/admin/contact',      label: 'Contact',      icon: <IconPhone />,    roles: ['admin'] },
 ]
 
 export default function AdminLayout({ children, fullHeight = false }) {
-  const { logout, user } = useAuth()
+  const { logout, user, role } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const { enAttenteCount } = useReservationContext()
@@ -67,7 +67,7 @@ export default function AdminLayout({ children, fullHeight = false }) {
 
         {/* Navigation */}
         <nav className="flex-grow space-y-1">
-          {navLinks.map((link) => {
+          {navLinks.filter(link => link.roles.includes(role)).map((link) => {
             const active = location.pathname === link.href
             const isReservations = link.href === '/admin/reservations'
             const showBadge = isReservations && enAttenteCount > 0
@@ -104,8 +104,10 @@ export default function AdminLayout({ children, fullHeight = false }) {
               </div>
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-bold uppercase tracking-wider truncate">Admin</p>
-              <p className="text-[9px] text-stone-400 uppercase tracking-widest">{user?.email ?? 'admin'}</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider truncate">
+                {role === 'manager' ? 'Manager' : 'Admin'}
+              </p>
+              <p className="text-[9px] text-stone-400 uppercase tracking-widest truncate">{user?.email ?? ''}</p>
             </div>
           </div>
           <button
