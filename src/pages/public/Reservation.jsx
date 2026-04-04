@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { genererCreneaux, verifierCapacite, creerReservation } from '../../lib/reservations'
 import PublicLayout from '../../components/layout/PublicLayout'
+import PageSEO from '../../components/seo/PageSEO'
 
 const creneaux = genererCreneaux()
 
@@ -75,6 +76,7 @@ export default function Reservation() {
 
   return (
     <PublicLayout>
+      <PageSEO titleKey="seo.resa_title" descKey="seo.resa_desc" path="/reservation" />
 
       {/* ── Fond dégradé subtil ── */}
       <div

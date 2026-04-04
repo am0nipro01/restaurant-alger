@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import PublicLayout from '../../components/layout/PublicLayout'
+import PageSEO from '../../components/seo/PageSEO'
 
 // TODO: remplacer par les vraies photos du restaurant
 const IMG_HERO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJ-0g7K7beNtSDfAJ6uVAeJewfySOHdLsb2pkJrdHi9KctI2UGY9YksQXiCF4fFE5YP8VV6d1La68MlA25hQwRiCM0BancOyK0YaKdL4dXUE98cXWJLkPrrrlaCl59l6q2kZYe_IelLdp6A_q-eVh1WFWMKzMVEvF_MqXWmdFGKRQLPI0zaN_bivwuXNqjRTsTmGRU9-6sn30wrDTQapBLSF0ckXqgeAxjPdobqKnX_elZcUxa8PJ0ooDtONfGtxLw40_Nt4B56KVQ'
@@ -37,6 +38,7 @@ export default function NotreHistoire() {
 
   return (
     <PublicLayout>
+      <PageSEO titleKey="seo.histoire_title" descKey="seo.histoire_desc" path="/notre-histoire" />
 
       {/* ── Hero ── */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-24 overflow-hidden">

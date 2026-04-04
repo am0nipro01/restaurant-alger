@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import PublicLayout from '../../components/layout/PublicLayout'
 import pb from '../../lib/pocketbase'
+import PageSEO from '../../components/seo/PageSEO'
+import RestaurantJsonLD from '../../components/seo/RestaurantJsonLD'
 
 // ─────────────────────────────────────────────────────
 // 🔴 DEBUG MODE — mettre à false une fois validé
@@ -86,6 +88,8 @@ export default function Contact() {
 
   return (
     <PublicLayout>
+      <PageSEO titleKey="seo.contact_title" descKey="seo.contact_desc" path="/contact" />
+      <RestaurantJsonLD />
 
       {/* ── Hero ── */}
       <section className="px-6 md:px-24 pt-48 pb-20 max-w-screen-2xl mx-auto">

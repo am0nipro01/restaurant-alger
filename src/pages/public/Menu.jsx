@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import pb from '../../lib/pocketbase'
 import PublicLayout from '../../components/layout/PublicLayout'
+import PageSEO from '../../components/seo/PageSEO'
 
 // TODO: remplacer par une vraie photo du restaurant (plat en céramique)
 const IMG_INTERLUDE = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCwVW0Eq_sqTB9h9KpegZqn5dBA9kwnAnaZ5LldBeZQypR3SHwO3xpThiL6CnVgnLaJULvAy3VE4MifMBMVQY_mXd8CHCw_nJkWcz9Z2BNHJkprTPNeCzTvG4utqtBgP5JIKCvEDeANFNtfa19ZHTbHUZAwGIBySAuZ66FIZJZ8qU188ZgAnBJskjuwlmXcdO3n5L-0gDZXXVG7psW90seT-oCfzAeOEiJaP56Yzttye4aCNGPgF3a8046Og-Khxjd739BLCzH4KsEx'
@@ -60,6 +61,7 @@ export default function Menu() {
 
   return (
     <PublicLayout>
+      <PageSEO titleKey="seo.menu_title" descKey="seo.menu_desc" path="/menu" />
 
       {/* ── Hero + Navigation catégories ── */}
       <header className="pt-40 pb-0 px-6 md:px-12 max-w-7xl mx-auto">

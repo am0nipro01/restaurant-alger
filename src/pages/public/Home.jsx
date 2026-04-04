@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import PublicLayout from '../../components/layout/PublicLayout'
+import PageSEO from '../../components/seo/PageSEO'
+import RestaurantJsonLD from '../../components/seo/RestaurantJsonLD'
 
 // TODO: remplacer par les vraies photos du restaurant
 const IMG_HERO = 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-RvPpfo0XX9yi0ysIsNu7-m9rmRp4g0lhFXFxrQ60ED73XuuD_G547crcgOJHNZ2x7eKMZzH_CkvYkx0kKeX4nI6jyNrLcwTaQtH6G6nX5ol2B5dVEDReINyL2PO00YW0jIlifeLd5WDyCy8vOYmWlBDv-XZI8x5CUjW25bprNehGUEeF5ZZ3m0YYC33KA-izaVBnq44tep2_wG9ITbpcKryUU3D7ygRY7OVf27pN1p90RA38ndvAgjz7E7KYrpufe4zLtkrG_9LH'
@@ -11,6 +13,8 @@ export default function Home() {
 
   return (
     <PublicLayout>
+      <PageSEO titleKey="seo.home_title" descKey="seo.home_desc" path="/" />
+      <RestaurantJsonLD />
 
       {/* ── Hero ── */}
       <section className="relative h-[95vh] w-full flex items-center justify-center overflow-hidden">

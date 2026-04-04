@@ -124,5 +124,18 @@
     "resa_btn": "Book a table",
     "social_titre": "Follow us",
     "droits": "© 2026 Algiers Gastronomy. All rights reserved."
+  },
+  "seo": {
+    "site_name": "Algiers Gastronomy",
+    "home_title": "Home",
+    "home_desc": "Algerian fine dining restaurant in Algiers. Traditional cuisine reinvented in an exceptional setting. Book your table with no deposit required.",
+    "menu_title": "Our Menu",
+    "menu_desc": "Discover our menu: starters, mains and desserts inspired by Algerian culinary heritage, crafted with seasonal produce.",
+    "histoire_title": "Our Story",
+    "histoire_desc": "The story of Algiers Gastronomy, a restaurant born from a passion for traditional and gastronomic Algerian cuisine in the heart of Algiers.",
+    "contact_title": "Contact & Directions",
+    "contact_desc": "Contact details, opening hours and directions to Algiers Gastronomy restaurant in Algiers. Online reservation available.",
+    "resa_title": "Reservation",
+    "resa_desc": "Book your table online at Algiers Gastronomy in Algiers. No deposit, no online payment. Settlement on site only."
   }
 }

@@ -124,5 +124,18 @@
     "resa_btn": "Réserver une table",
     "social_titre": "Suivez-nous",
     "droits": "© 2026 Algiers Gastronomy. Tous droits réservés."
+  },
+  "seo": {
+    "site_name": "Algiers Gastronomy",
+    "home_title": "Accueil",
+    "home_desc": "Restaurant gastronomique algérien à Alger. Cuisine traditionnelle réinventée dans un cadre d'exception. Réservez votre table sans acompte.",
+    "menu_title": "Notre Carte",
+    "menu_desc": "Découvrez notre carte : entrées, plats et desserts inspirés du patrimoine culinaire algérien, travaillés avec des produits de saison.",
+    "histoire_title": "Notre Histoire",
+    "histoire_desc": "L'histoire d'Algiers Gastronomy, un restaurant né de la passion pour la cuisine algérienne traditionnelle et gastronomique au cœur d'Alger.",
+    "contact_title": "Contact & Accès",
+    "contact_desc": "Coordonnées, horaires d'ouverture et accès au restaurant Algiers Gastronomy à Alger. Réservation en ligne disponible.",
+    "resa_title": "Réservation",
+    "resa_desc": "Réservez votre table en ligne au restaurant Algiers Gastronomy à Alger. Sans acompte, sans paiement en ligne. Règlement sur place uniquement."
   }
 }
