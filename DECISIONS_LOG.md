@@ -28,3 +28,8 @@
 | 2026-04-03 | — | Fix confirmation : positionnement absolute pour éviter le chevauchement image/texte (bug `-ml-20` Stitch) |
 | 2026-04-03 | — | Hook email Resend (confirmation réservation) : **reporté** — hook PocketBase créé dans `backend/pb_hooks/reservations.pb.js`, à activer en définissant `RESEND_API_KEY` + domaine vérifié sur resend.com. À faire avant mise en production. |
 | 2026-04-03 | — | Liaison réservations ↔ tables : champ `table` (Relation → tables) ajouté dans PocketBase. Assignation depuis admin/reservations, affichage client dans plan de salle. |
+| 2026-04-04 | — | Page admin/contact créée — collection PocketBase `site_config` (clé "contact", valeur JSON). Stocke : nom, adresse, ville, téléphone, whatsapp, emails, réseaux, horaires par jour, infos pratiques, Google Maps. |
+| 2026-04-04 | — | Branchement Contact public → site_config validé. Contact.jsx charge les données live, fallback silencieux i18n si champ vide. DEBUG_MODE utilisé pendant validation, supprimé après. |
+| 2026-04-04 | — | Vue calendrier ajoutée dans admin/reservations — toggle Liste/Calendrier, grille mensuelle lun-dim, pastilles colorées par statut, panneau latéral par jour avec actions. Aucune lib externe. |
+| 2026-04-04 | — | Fix Promise.all réservations — même correction que PlanDeSalle : fetches réservations et tables séparés en deux try/catch indépendants pour éviter le tout-ou-rien. |
+| 2026-04-04 | — | Questionnaire gérant créé : `docs/questionnaire-gerant.md` — 11 sections (identité, adresse, horaires, capacité, réservation, menu, équipe, visuels, pratique, textes, technique). À transmettre au gérant. |

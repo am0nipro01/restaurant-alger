@@ -32,8 +32,13 @@ Créer les pages statiques du site : accueil, histoire du restaurant, présentat
 - [ ] **Atelier 04 — refacto Contenu.jsx** : maintenant que les sections sont définies,
   mettre à jour l'éditeur admin pour gérer les sections indépendamment
   (histoire / equipe / contact, avec champs titre + contenu par section)
-- [ ] Intégration design system final (Atelier 09)
+- [x] Intégration design system final (Atelier 09) ✅
+- [x] Branchement Contact public → site_config PocketBase ✅ (2026-04-04)
+  - Contact.jsx charge adresse, ville, téléphone, horaires, infos pratiques, réseaux, Google Maps depuis PocketBase
+  - Fallback silencieux sur i18n si champ vide ou PocketBase indisponible
+  - DEBUG_MODE utilisé pendant validation, retiré après validation gérant
 
 ## Questions ouvertes
 - Adresse précise du restaurant (affiché "à confirmer" pour l'instant)
 - Nom définitif du restaurant (affiché "Restaurant Alger" provisoirement)
+- Notre Histoire et page Menu publique : branchement depuis site_config non fait (pas demandé)
