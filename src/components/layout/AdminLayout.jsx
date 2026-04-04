@@ -33,6 +33,11 @@ const IconPhone = () => (
     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
   </svg>
 )
+const IconExternalLink = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
+    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+)
 
 const navLinks = [
   { href: '/admin/reservations', label: 'Reservations', icon: <IconCalendar />, roles: ['admin', 'manager'] },
@@ -64,6 +69,15 @@ export default function AdminLayout({ children, fullHeight = false }) {
           <h1 className="font-headline text-base text-charcoal tracking-tight">ALGIERS GASTRONOMY</h1>
           <p className="font-label text-[10px] tracking-[0.2em] uppercase text-stone-400 mt-1">Editorial Dashboard</p>
         </div>
+
+        {/* Retour site public */}
+        <Link
+          to="/"
+          className="flex items-center gap-2 px-4 py-2 mb-6 text-[10px] font-bold tracking-widest uppercase text-stone-400 hover:text-charcoal border border-stone-200 hover:border-stone-400 transition-all duration-200"
+        >
+          <IconExternalLink />
+          Voir le site
+        </Link>
 
         {/* Navigation */}
         <nav className="flex-grow space-y-1">
