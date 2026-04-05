@@ -434,7 +434,12 @@ export default function Reservations() {
               })
             )
           } else if (e.action === 'update') {
-            setReservations(prev => prev.map(r => r.id === e.record.id ? e.record : r))
+            setReservations(prev => prev.map(r => {
+              if (r.id !== e.record.id) return r
+              const localTs  = r.updated  ? new Date(r.updated).getTime()         : 0
+              const remoteTs = e.record.updated ? new Date(e.record.updated).getTime() : 0
+              return remoteTs >= localTs ? e.record : r
+            }))
           } else if (e.action === 'delete') {
             setReservations(prev => prev.filter(r => r.id !== e.record.id))
           }
@@ -456,9 +461,9 @@ export default function Reservations() {
 
   const changerStatut = async (id, nouveauStatut) => {
     try {
-      await pb.collection('reservations').update(id, { statut: nouveauStatut })
+      const result = await pb.collection('reservations').update(id, { statut: nouveauStatut })
       setReservations((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, statut: nouveauStatut } : r))
+        prev.map((r) => (r.id === id ? { ...r, statut: nouveauStatut, updated: result.updated } : r))
       )
       rafraichirCount()
     } catch (e) {
@@ -472,14 +477,15 @@ export default function Reservations() {
       if (res?.table && res.table !== tableId) {
         await pb.collection('tables').update(res.table, { statut: 'libre' })
       }
-      await pb.collection('reservations').update(reservationId, { table: tableId || null })
+      const resResult = await pb.collection('reservations').update(reservationId, { table: tableId || null })
       if (tableId) {
         const statutTable = res?.statut === 'confirmee' ? 'occupee' : 'reservee'
         await pb.collection('tables').update(tableId, { statut: statutTable })
       }
       // Mise à jour locale sans rechargement complet (évite de fermer le panneau calendrier)
+      // On stocke le timestamp updated pour que le subscription n'écrase pas cet état
       setReservations(prev =>
-        prev.map(r => r.id === reservationId ? { ...r, table: tableId || null } : r)
+        prev.map(r => r.id === reservationId ? { ...r, table: tableId || null, updated: resResult.updated } : r)
       )
       const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
       setTables(tablesData)
