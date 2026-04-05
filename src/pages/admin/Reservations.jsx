@@ -471,14 +471,21 @@ export default function Reservations() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const changerStatut = async (id, nouveauStatut) => {
+    // Optimistic update : UI mise à jour immédiatement, sans attendre PocketBase
+    setReservations((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, statut: nouveauStatut } : r))
+    )
     try {
       const result = await pb.collection('reservations').update(id, { statut: nouveauStatut })
+      // On applique le vrai timestamp PocketBase pour protéger contre les events subscription tardifs
       setReservations((prev) =>
         prev.map((r) => (r.id === id ? { ...r, statut: nouveauStatut, updated: result.updated } : r))
       )
       rafraichirCount()
     } catch (e) {
       console.error('Erreur mise à jour statut:', e)
+      // Rollback si PocketBase échoue
+      chargerReservations({ afficherErreur: false })
     }
   }
 
