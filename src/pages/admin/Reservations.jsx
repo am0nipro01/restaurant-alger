@@ -477,7 +477,12 @@ export default function Reservations() {
         const statutTable = res?.statut === 'confirmee' ? 'occupee' : 'reservee'
         await pb.collection('tables').update(tableId, { statut: statutTable })
       }
-      chargerReservations()
+      // Mise à jour locale sans rechargement complet (évite de fermer le panneau calendrier)
+      setReservations(prev =>
+        prev.map(r => r.id === reservationId ? { ...r, table: tableId || null } : r)
+      )
+      const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
+      setTables(tablesData)
     } catch (e) {
       console.error('Erreur assignation table:', e)
     }
