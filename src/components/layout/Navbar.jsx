@@ -34,8 +34,8 @@ export default function Navbar() {
         ALGIERS GASTRONOMY
       </Link>
 
-      {/* Liens — desktop */}
-      <div className="hidden md:flex items-center gap-10">
+      {/* Liens — desktop uniquement (lg+) */}
+      <div className="hidden lg:flex items-center gap-10">
         {links.map(({ to, label }) => (
           <Link
             key={to}
@@ -51,9 +51,9 @@ export default function Navbar() {
         ))}
       </div>
 
-      {/* Droite — langue + réserver */}
-      <div className="flex items-center gap-6 md:gap-8">
-        {/* Sélecteur de langue — desktop */}
+      {/* Droite */}
+      <div className="flex items-center gap-4 lg:gap-8">
+        {/* Sélecteur de langue — desktop uniquement */}
         <div className="hidden lg:flex items-center gap-2">
           {LANGS.map((lang, idx) => (
             <span key={lang.code} className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Bouton réserver */}
+        {/* Bouton réserver — toujours visible */}
         <Link
           to="/reservation"
           className="bg-primary text-white px-7 py-2.5 font-label text-[10px] tracking-[0.25em] uppercase hover:bg-primary-container transition-all duration-300"
@@ -82,9 +82,9 @@ export default function Navbar() {
           {t('nav.reserver')}
         </Link>
 
-        {/* Burger — mobile */}
+        {/* Burger — mobile + tablette (< lg) */}
         <button
-          className="md:hidden flex flex-col gap-[5px]"
+          className="lg:hidden flex flex-col gap-[5px]"
           onClick={() => setOpen(!open)}
           aria-label="Menu"
         >
@@ -106,9 +106,9 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Menu mobile */}
+      {/* Menu burger — mobile + tablette (< lg) */}
       {open && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-surface border-b border-black/5 py-8 px-6 flex flex-col gap-6 animate-fade-in shadow-desert">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-surface border-b border-black/5 py-8 px-6 flex flex-col gap-6 animate-fade-in shadow-desert">
           {links.map(({ to, label }) => (
             <Link
               key={to}
@@ -121,7 +121,20 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
-          {/* Langue — mobile */}
+
+          {/* Lien Dashboard */}
+          <Link
+            to="/admin/reservations"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 font-label tracking-[0.2em] uppercase text-[11px] text-stone-400 hover:text-primary transition-colors pt-1"
+          >
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Dashboard
+          </Link>
+
+          {/* Langue — mobile/tablette */}
           <div className="flex items-center gap-4 pt-4 border-t border-black/5">
             {LANGS.map((lang) => (
               <button

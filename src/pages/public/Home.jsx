@@ -49,6 +49,16 @@ export default function Home() {
             >
               {t('home.cta_carte')}
             </Link>
+            {/* Bouton Dashboard — desktop uniquement */}
+            <Link
+              to="/admin/reservations"
+              className="hidden lg:flex items-center gap-2 border border-white/20 text-white/60 px-8 py-4 font-label text-[10px] tracking-[0.25em] uppercase hover:border-white/40 hover:text-white/80 transition-all duration-300 backdrop-blur-sm"
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Dashboard
+            </Link>
           </div>
         </div>
 
