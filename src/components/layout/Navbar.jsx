@@ -82,6 +82,17 @@ export default function Navbar() {
           {t('nav.reserver')}
         </Link>
 
+        {/* Bouton Dashboard — desktop uniquement */}
+        <Link
+          to="/admin/reservations"
+          className="hidden lg:flex items-center gap-2 border border-black/10 text-charcoal/50 px-5 py-2.5 font-label text-[10px] tracking-[0.25em] uppercase hover:border-black/30 hover:text-charcoal transition-all duration-300"
+        >
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Dashboard
+        </Link>
+
         {/* Burger — mobile + tablette (< lg) */}
         <button
           className="lg:hidden flex flex-col gap-[5px]"
