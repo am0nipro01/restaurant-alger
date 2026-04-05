@@ -111,7 +111,7 @@ function formatDateLong(ymd) {
 }
 
 // ── Vue Calendrier ────────────────────────────────────
-function VueCalendrier({ reservations, onChangerStatut }) {
+function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable }) {
   const today = new Date()
   const [annee, setAnnee]             = useState(today.getFullYear())
   const [mois,  setMois]              = useState(today.getMonth())
@@ -307,6 +307,25 @@ function VueCalendrier({ reservations, onChangerStatut }) {
                         <p className="text-[10px] text-stone-400 italic mt-1 line-clamp-2">{r.message}</p>
                       )}
 
+                      {/* Assignation de table */}
+                      {r.statut !== 'annulee' && (
+                        <div className="mt-3">
+                          <select
+                            value={r.table || ''}
+                            onChange={(e) => onAssignerTable(r.id, e.target.value || null)}
+                            className="w-full text-[10px] font-label tracking-wide uppercase border border-stone-200 bg-white text-stone-600 py-1.5 px-2 cursor-pointer hover:border-stone-400 transition-colors focus:outline-none focus:border-primary"
+                          >
+                            <option value="">— Table non assignée —</option>
+                            {(tables || []).map((t) => (
+                              <option key={t.id} value={t.id}>
+                                Table {t.numero}{t.capacite ? ` (${t.capacite} pers.)` : ''}
+                                {t.statut === 'occupee' && r.table !== t.id ? ' ✗' : ''}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
                       {/* Actions rapides */}
                       {r.statut === 'en_attente' && (
                         <div className="flex gap-2 mt-3">
@@ -370,7 +389,7 @@ export default function Reservations() {
   const [loading, setLoading]           = useState(true)
   const [erreur, setErreur]             = useState(false)
   const [filtre, setFiltre]             = useState('tous')
-  const [vue, setVue]                   = useState('liste') // 'liste' | 'calendrier'
+  const [vue, setVue]                   = useState('calendrier') // 'liste' | 'calendrier'
   const navigate = useNavigate()
   const { rafraichirCount } = useReservationContext()
 
@@ -548,7 +567,7 @@ export default function Reservations() {
       ) : vue === 'calendrier' ? (
 
         /* ── Vue Calendrier ── */
-        <VueCalendrier reservations={reservations} onChangerStatut={changerStatut} />
+        <VueCalendrier reservations={reservations} onChangerStatut={changerStatut} tables={tables} onAssignerTable={assignerTable} />
 
       ) : (
 
