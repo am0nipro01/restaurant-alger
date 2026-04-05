@@ -116,6 +116,12 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
   const [annee, setAnnee]             = useState(today.getFullYear())
   const [mois,  setMois]              = useState(today.getMonth())
   const [jourSel, setJourSel]         = useState(null) // "YYYY-MM-DD"
+  const [processing, setProcessing]   = useState(null) // id de la résa en cours de traitement
+
+  const handleStatut = async (id, statut) => {
+    setProcessing(id)
+    try { await onChangerStatut(id, statut) } finally { setProcessing(null) }
+  }
 
   const todayYMD = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
 
@@ -330,14 +336,16 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
                       {r.statut === 'en_attente' && (
                         <div className="flex gap-2 mt-3">
                           <button
-                            onClick={() => onChangerStatut(r.id, 'confirmee')}
-                            className="flex-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest py-1.5 hover:bg-primary hover:text-white transition-all cursor-pointer"
+                            onClick={() => handleStatut(r.id, 'confirmee')}
+                            disabled={processing === r.id}
+                            className="flex-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest py-1.5 hover:bg-primary hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                           >
-                            Confirmer
+                            {processing === r.id ? '…' : 'Confirmer'}
                           </button>
                           <button
-                            onClick={() => onChangerStatut(r.id, 'annulee')}
-                            className="px-3 text-stone-300 hover:text-red-500 transition-colors cursor-pointer"
+                            onClick={() => handleStatut(r.id, 'annulee')}
+                            disabled={processing === r.id}
+                            className="px-3 text-stone-300 hover:text-red-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                           >
                             <IconClose />
                           </button>
@@ -346,15 +354,17 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
                       {r.statut === 'confirmee' && (
                         <div className="flex gap-2 mt-3">
                           <button
-                            onClick={() => onChangerStatut(r.id, 'en_attente')}
-                            className="text-stone-400 hover:text-stone-800 transition-colors cursor-pointer"
+                            onClick={() => handleStatut(r.id, 'en_attente')}
+                            disabled={processing === r.id}
+                            className="text-stone-400 hover:text-stone-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                             title="Remettre en attente"
                           >
                             <IconHistory />
                           </button>
                           <button
-                            onClick={() => onChangerStatut(r.id, 'annulee')}
-                            className="text-stone-400 hover:text-red-500 transition-colors cursor-pointer"
+                            onClick={() => handleStatut(r.id, 'annulee')}
+                            disabled={processing === r.id}
+                            className="text-stone-400 hover:text-red-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                             title="Annuler"
                           >
                             <IconClose />
@@ -363,8 +373,9 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
                       )}
                       {r.statut === 'annulee' && (
                         <button
-                          onClick={() => onChangerStatut(r.id, 'en_attente')}
-                          className="mt-3 text-stone-400 hover:text-primary transition-colors cursor-pointer"
+                          onClick={() => handleStatut(r.id, 'en_attente')}
+                          disabled={processing === r.id}
+                          className="mt-3 text-stone-400 hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                           title="Rétablir"
                         >
                           <IconRestore />
