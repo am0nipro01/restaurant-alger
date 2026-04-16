@@ -158,7 +158,7 @@ export default function Contenu() {
     <AdminLayout>
 
       {/* ── Header ── */}
-      <header className="mb-12 max-w-5xl">
+      <header className="mb-12 max-w-5xl lg:mx-auto">
         <div className="flex justify-between items-end border-b border-stone-100 pb-8">
           <div>
             <h2 className="font-headline text-4xl text-charcoal tracking-tight">Notre Histoire</h2>
@@ -188,7 +188,7 @@ export default function Contenu() {
           Chargement…
         </div>
       ) : (
-        <div className="max-w-5xl grid grid-cols-12 gap-12">
+        <div className="max-w-5xl lg:mx-auto grid grid-cols-12 gap-12">
 
           {/* ── Sidebar gauche ── */}
           <div className="col-span-3 space-y-10">

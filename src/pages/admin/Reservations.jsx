@@ -155,7 +155,7 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
   const resJourSel = jourSel ? (parDate[jourSel] || []) : []
 
   return (
-    <div className="flex gap-0">
+    <div className="flex flex-col lg:flex-row gap-0">
 
       {/* ── Grille calendrier ── */}
       <div className="flex-grow bg-white">
@@ -251,8 +251,10 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
       </div>
 
       {/* ── Panneau latéral jour sélectionné ── */}
-      <div className={`flex-shrink-0 border-l border-stone-200 bg-white transition-all duration-300 overflow-y-auto
-        ${jourSel ? 'w-80' : 'w-0 overflow-hidden border-0'}
+      <div className={`flex-shrink-0 bg-white transition-all duration-300 overflow-y-auto
+        ${jourSel
+          ? 'border-t border-stone-200 w-full lg:border-t-0 lg:border-l lg:w-80'
+          : 'w-0 overflow-hidden border-0'}
       `}>
         {jourSel && (
           <div className="p-6">
@@ -537,14 +539,14 @@ export default function Reservations() {
     <AdminLayout>
 
       {/* ── Header ── */}
-      <header className="flex justify-between items-end mb-12">
+      <header className="flex flex-col xl:flex-row xl:justify-between xl:items-end gap-6 xl:gap-0 mb-8 xl:mb-12">
         <div>
           <h2 className="font-headline text-4xl text-charcoal tracking-tight">Gestion des Réservations</h2>
           <p className="font-body text-stone-500 mt-2 text-sm max-w-lg">
             Surveillez les engagements de la table et orchestrez l'expérience culinaire du soir.
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           {/* Toggle vue */}
           <div className="flex border border-stone-200">
             <button

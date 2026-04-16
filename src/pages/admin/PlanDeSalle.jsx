@@ -11,40 +11,32 @@ import {
   changerStatutTable,
 } from '../../lib/tables'
 
-const CANVAS_WIDTH  = 820
-const CANVAS_HEIGHT = 840
+// Largeur : 700px + 2×p-4 = 732px < 768px (tablette)
+// Hauteur : 800px (suffisant pour les 6 rangées, défilement vertical si besoin)
+const CANVAS_WIDTH  = 700
+const CANVAS_HEIGHT = 800
 
-// Stitch color scheme per statut
+// Design system — primary / tertiary / error
 const STYLE = {
-  libre:    { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
-  reservee: { bg: '#fef9c3', border: '#ca8a04', text: '#854d0e' },
-  occupee:  { bg: '#fee2e2', border: '#dc2626', text: '#991b1b' },
+  libre:    { bg: 'rgba(132, 83, 37, 0.05)',  border: '#845325', text: '#845325' },
+  reservee: { bg: 'rgba(31, 103, 118, 0.05)', border: '#1f6776', text: '#1f6776' },
+  occupee:  { bg: 'rgba(186, 26, 26, 0.05)',  border: '#ba1a1a', text: '#ba1a1a' },
 }
 
 const STATUT_LABELS = { libre: 'Libre', reservee: 'Réservée', occupee: 'Occupée' }
 
-const STATUT_ACTION = {
-  libre:    { bg: 'bg-green-50',  text: 'text-green-800',  border: 'border-green-200',  dot: 'bg-green-600',  label: 'Marquer comme Libre'    },
-  reservee: { bg: 'bg-yellow-50', text: 'text-yellow-800', border: 'border-yellow-200', dot: 'bg-yellow-600', label: 'Marquer comme Réservée'  },
-  occupee:  { bg: 'bg-red-50',    text: 'text-red-800',    border: 'border-red-200',    dot: 'bg-red-600',    label: 'Marquer comme Occupée'   },
-}
-
-const BADGE = {
-  libre:    'bg-green-100 text-green-800',
-  reservee: 'bg-yellow-100 text-yellow-800',
-  occupee:  'bg-red-100 text-red-800',
-}
-
 export default function PlanDeSalle() {
   const [tables, setTables]                       = useState([])
-  const [reservations, setReservations]           = useState([]) // pour la liaison
+  const [reservations, setReservations]           = useState([])
   const [loading, setLoading]                     = useState(true)
   const [tableSelectionnee, setTableSelectionnee] = useState(null)
   const [enCours, setEnCours]                     = useState(false)
   const [message, setMessage]                     = useState(null)
 
-  const nodeRefs   = useRef({})
-  const draggedRef = useRef(false)
+  const nodeRefs      = useRef({})
+  const draggedRef    = useRef(false)
+  const dragTotalMove = useRef(0)
+  const DRAG_THRESHOLD = 6 // px — évite que les micro-mouvements tactiles bloquent le clic
 
   const getNodeRef = (id) => {
     if (!nodeRefs.current[id]) nodeRefs.current[id] = createRef()
@@ -58,16 +50,12 @@ export default function PlanDeSalle() {
 
   const charger = async () => {
     setLoading(true)
-
-    // Fetch tables — critique, toujours en premier
     try {
       const tablesData = await pb.collection('tables').getFullList({ sort: 'numero' })
       setTables(tablesData)
     } catch (e) {
       console.error('[PlanDeSalle] Erreur fetch tables:', e)
     }
-
-    // Fetch réservations — indépendant, une erreur ici ne bloque pas les tables
     try {
       const resData = await pb.collection('reservations').getFullList({
         filter: 'statut = "confirmee" || statut = "en_attente"',
@@ -77,7 +65,6 @@ export default function PlanDeSalle() {
     } catch (e) {
       console.error('[PlanDeSalle] Erreur fetch réservations:', e)
     }
-
     setLoading(false)
   }
 
@@ -102,8 +89,7 @@ export default function PlanDeSalle() {
 
   const handleDragStop = async (table, _e, data) => {
     const wasDragged = draggedRef.current
-    draggedRef.current = false // toujours remettre à false après chaque interaction
-
+    draggedRef.current = false
     if (wasDragged) {
       const { width, height } = dimensionsTable(table.capacite)
       const newX = Math.max(0, Math.min(data.x, CANVAS_WIDTH  - width))
@@ -124,7 +110,6 @@ export default function PlanDeSalle() {
     if (ok) {
       setTables((prev) => prev.map((t) => t.id === tableSelectionnee.id ? { ...t, statut } : t))
       setTableSelectionnee((prev) => ({ ...prev, statut }))
-      // Si on libère la table, désassigner la réservation liée
       if (statut === 'libre') {
         const res = reservations.find((r) => r.table === tableSelectionnee.id)
         if (res) {
@@ -140,13 +125,14 @@ export default function PlanDeSalle() {
     return acc
   }, {})
 
-  // Trouver la réservation liée à la table sélectionnée
   const resServation = tableSelectionnee
     ? reservations.find((r) => r.table === tableSelectionnee.id) || null
     : null
 
+  const selectedStyle = tableSelectionnee ? STYLE[tableSelectionnee.statut] || STYLE.libre : null
+
   const formatHeure = (h) => h ? h.slice(0, 5) : '—'
-  const formatDate = (d) => {
+  const formatDate  = (d) => {
     if (!d) return '—'
     return new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
   }
@@ -155,97 +141,139 @@ export default function PlanDeSalle() {
     <AdminLayout fullHeight>
 
       {/* ── Header ── */}
-      <header className="h-20 flex items-center justify-between px-10 bg-surface border-b border-stone-100 flex-shrink-0">
-        <div>
-          <h2 className="font-headline text-2xl uppercase tracking-widest text-charcoal">Plan de Salle</h2>
-          <p className="text-[10px] font-label tracking-[0.2em] uppercase text-stone-400">
-            Configuration Interactive de l'Espace
-          </p>
+      <header className="flex-shrink-0 h-14 flex items-center justify-between px-8 border-b border-[#1b1c1a]/5 bg-[#faf9f5]">
+
+        {/* Titre + compteurs */}
+        <div className="flex items-center gap-6">
+          <h2 className="font-['Noto_Serif'] text-xl font-bold text-[#1b1c1a] tracking-tight">
+            Plan de Salle
+          </h2>
+          <div className="w-px h-5 bg-[#d6c3b6]/60" />
+          <div className="flex items-center gap-5">
+            {STATUTS.map((s) => (
+              <div key={s} className="flex items-center gap-1.5">
+                <div className="w-2 h-2 flex-shrink-0" style={{ backgroundColor: STYLE[s].border }} />
+                <span className="font-['Manrope'] text-[10px] font-bold tracking-[0.15em] uppercase text-[#51443b]">
+                  {compteurs[s] || 0} {STATUT_LABELS[s]}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-4 items-center">
+
+        {/* Actions */}
+        <div className="flex items-center gap-4">
           {message && (
-            <span className={`text-xs tracking-wider uppercase ${message.type === 'ok' ? 'text-green-600' : message.type === 'erreur' ? 'text-red-500' : 'text-stone-400'}`}>
+            <span
+              className="font-['Manrope'] text-[10px] tracking-widest uppercase"
+              style={{ color: message.type === 'ok' ? '#845325' : message.type === 'erreur' ? '#ba1a1a' : '#51443b' }}
+            >
               {message.text}
             </span>
-          )}
-          {tables.length > 0 && (
-            <button
-              onClick={handleReinitialiser}
-              disabled={enCours}
-              className="font-label text-xs tracking-widest uppercase border border-stone-200 px-6 py-2.5 hover:bg-[#e9e8e4] transition-colors disabled:opacity-50"
-            >
-              Réinitialiser
-            </button>
           )}
           {tables.length === 0 && !loading && (
             <button
               onClick={handleInitialiser}
               disabled={enCours}
-              className="font-label text-xs tracking-widest uppercase bg-primary text-white px-8 py-2.5 hover:bg-primary-container transition-all disabled:opacity-50"
+              className="font-['Manrope'] text-[10px] tracking-widest uppercase bg-[#845325] text-white px-6 py-2.5 hover:bg-[#c58b58] transition-all duration-300 disabled:opacity-50"
             >
-              {enCours ? 'Création…' : 'Initialiser les tables'}
+              {enCours ? 'Création…' : 'Initialiser'}
+            </button>
+          )}
+          {tables.length > 0 && (
+            <button
+              onClick={handleReinitialiser}
+              disabled={enCours}
+              className="font-['Manrope'] text-[10px] tracking-widest uppercase border border-[#d6c3b6]/60 px-5 py-2.5 hover:bg-[#efeeea] transition-colors duration-300 disabled:opacity-50 text-[#51443b]"
+            >
+              Réinitialiser
             </button>
           )}
         </div>
+
       </header>
 
-      {/* ── Corps ── */}
-      <div className="flex flex-grow overflow-hidden">
+      {/* ── Zone principale (relative pour bottom sheet) ── */}
+      <div className="flex-grow relative overflow-hidden">
 
-        {/* ── Canvas ── */}
-        <section className="flex-grow flex items-center justify-center p-12 overflow-auto bg-[#f4f4f0]">
+        {/* ── Canvas blueprint ── */}
+        <div
+          className="h-full overflow-auto flex items-start justify-center p-4"
+          style={{
+            backgroundImage:
+              'linear-gradient(#1b1c1a08 1px, transparent 1px), linear-gradient(90deg, #1b1c1a08 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+            backgroundColor: '#faf9f5',
+          }}
+        >
           {loading ? (
-            <p className="text-stone-400 text-sm tracking-widest uppercase">Chargement…</p>
+            <p className="font-['Manrope'] text-[10px] tracking-widest uppercase text-[#51443b] mt-20">
+              Chargement…
+            </p>
           ) : tables.length === 0 ? (
-            <div className="bg-white p-16 text-center shadow-sm">
-              <p className="text-stone-400 text-sm">Aucune table. Cliquez sur "Initialiser les tables".</p>
-            </div>
+            <p className="font-['Manrope'] text-xs text-[#51443b] tracking-wider mt-20">
+              Aucune table. Cliquez sur "Initialiser".
+            </p>
           ) : (
             <div
-              className="relative bg-white shadow-2xl border border-stone-200 flex-shrink-0"
-              style={{
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
-                backgroundImage: 'radial-gradient(#d6c3b6 1px, transparent 1px)',
-                backgroundSize: '40px 40px',
-              }}
+              className="relative flex-shrink-0"
+              style={{ width: CANVAS_WIDTH, height: CANVAS_HEIGHT }}
             >
-              {/* Murs décoratifs */}
-              <div className="absolute top-0 left-0 w-full h-4 bg-stone-800" />
-              <div className="absolute top-0 left-0 h-full w-4 bg-stone-800" />
-              <div className="absolute bottom-0 right-0 w-1/2 h-4 bg-stone-800" />
-              <div className="absolute top-0 right-0 h-1/3 w-4 bg-stone-800" />
-
-              {/* Badge entrée */}
-              <div className="absolute -top-6 left-12 bg-white px-4 border border-stone-800 font-label text-[10px] tracking-widest uppercase py-1 z-10">
-                Entrée Principale
-              </div>
+              {/* Marques angulaires */}
+              <div className="absolute top-0 left-0 w-px h-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute top-0 left-0 h-px w-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-px h-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute top-0 right-0 h-px w-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-px h-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 h-px w-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-px h-10 bg-[#d6c3b6]/50 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 h-px w-10 bg-[#d6c3b6]/50 pointer-events-none" />
 
               {/* Zone Lounge */}
-              <div className="absolute bottom-12 left-8 w-48 h-52 bg-[#e3e2df] border-l-4 border-primary p-4 pointer-events-none">
-                <span className="font-headline text-sm uppercase tracking-tighter opacity-30">Zone Lounge</span>
+              <div
+                className="absolute bottom-8 left-6 w-36 h-36 pointer-events-none flex flex-col justify-end p-3"
+                style={{ backgroundColor: 'rgba(239, 238, 234, 0.5)' }}
+              >
+                <span className="font-['Noto_Serif'] text-[9px] uppercase tracking-tighter text-[#1b1c1a]/20">
+                  Zone Lounge
+                </span>
               </div>
 
-              {/* Terrasse */}
-              <div className="absolute bottom-4 right-4 w-72 h-48 bg-primary/5 flex flex-col items-center justify-center border-t-2 border-l-2 border-primary/20 pointer-events-none">
-                <span className="font-label text-[10px] tracking-widest uppercase opacity-50">Terrasse Casbah</span>
+              {/* Terrasse Casbah */}
+              <div
+                className="absolute bottom-4 right-4 w-52 h-36 pointer-events-none flex flex-col items-center justify-center"
+                style={{
+                  backgroundColor: 'rgba(132, 83, 37, 0.02)',
+                  borderTop: '1px solid rgba(132, 83, 37, 0.12)',
+                  borderLeft: '1px solid rgba(132, 83, 37, 0.12)',
+                }}
+              >
+                <span className="font-['Manrope'] text-[9px] tracking-widest uppercase text-[#1b1c1a]/18">
+                  Terrasse Casbah
+                </span>
               </div>
 
               {/* Tables draggables */}
               {tables.map((table) => {
                 const { width, height } = dimensionsTable(table.capacite)
-                const s = STYLE[table.statut] || STYLE.libre
+                const s          = STYLE[table.statut] || STYLE.libre
                 const isSelected = tableSelectionnee?.id === table.id
-                const nodeRef = getNodeRef(table.id)
+                const nodeRef    = getNodeRef(table.id)
 
                 return (
                   <Draggable
                     key={table.id}
                     nodeRef={nodeRef}
-                    defaultPosition={{ x: table.position_x || 0, y: table.position_y || 0 }}
+                    defaultPosition={{
+                      x: Math.max(0, Math.min(table.position_x || 0, CANVAS_WIDTH  - width)),
+                      y: Math.max(0, Math.min(table.position_y || 0, CANVAS_HEIGHT - height)),
+                    }}
                     bounds="parent"
-                    onStart={() => { draggedRef.current = false }}
-                    onDrag={()  => { draggedRef.current = true  }}
+                    onStart={() => { draggedRef.current = false; dragTotalMove.current = 0 }}
+                    onDrag={(_, data) => {
+                      dragTotalMove.current += Math.abs(data.deltaX) + Math.abs(data.deltaY)
+                      if (dragTotalMove.current > DRAG_THRESHOLD) draggedRef.current = true
+                    }}
                     onStop={(e, data) => handleDragStop(table, e, data)}
                   >
                     <div
@@ -255,16 +283,26 @@ export default function PlanDeSalle() {
                       onClick={() => handleClickTable(table)}
                     >
                       <div
-                        className="w-full h-full flex items-center justify-center"
+                        className="w-full h-full flex flex-col items-center justify-center gap-0.5"
                         style={{
                           backgroundColor: s.bg,
-                          border: `1px solid ${s.border}`,
-                          outline: isSelected ? `3px solid ${s.border}` : 'none',
-                          outlineOffset: '2px',
+                          border:          `2px solid ${s.border}`,
+                          outline:         isSelected ? `2px solid ${s.border}` : 'none',
+                          outlineOffset:   '3px',
+                          transition:      'outline 150ms ease-out',
                         }}
                       >
-                        <span className="font-label text-[10px] font-bold" style={{ color: s.text }}>
-                          {table.numero}
+                        <span
+                          className="font-['Manrope'] text-[10px] font-bold leading-none"
+                          style={{ color: s.text }}
+                        >
+                          T{table.numero}
+                        </span>
+                        <span
+                          className="font-['Manrope'] text-[8px] font-bold uppercase tracking-tight leading-none"
+                          style={{ color: s.text, opacity: 0.6 }}
+                        >
+                          {table.capacite} Pax
                         </span>
                       </div>
                     </div>
@@ -273,135 +311,123 @@ export default function PlanDeSalle() {
               })}
             </div>
           )}
-        </section>
+        </div>
 
-        {/* ── Panneau détail ── */}
-        <aside className="w-96 bg-surface border-l border-stone-100 flex flex-col p-8 overflow-y-auto flex-shrink-0">
-          {tableSelectionnee ? (
-            <>
-              <div className="mb-8">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <span className="font-label text-[10px] tracking-widest uppercase text-stone-400">Détails de la Table</span>
-                    <h3 className="font-headline text-3xl text-charcoal">{tableSelectionnee.numero}</h3>
-                  </div>
-                  <span className={`font-label text-[10px] px-3 py-1 uppercase tracking-wider font-bold ${BADGE[tableSelectionnee.statut] || 'bg-stone-100 text-stone-600'}`}>
+        {/* ── Bottom detail sheet ── */}
+        <div
+          className={`absolute bottom-0 left-0 w-full z-30 backdrop-blur-md transition-transform duration-500 ease-out ${
+            tableSelectionnee ? 'translate-y-0' : 'translate-y-full'
+          }`}
+          style={{
+            backgroundColor: 'rgba(250, 249, 245, 0.97)',
+            boxShadow: '0 -20px 40px rgba(27, 28, 26, 0.08)',
+          }}
+        >
+          {/* Handle */}
+          <div className="flex justify-center pt-3">
+            <div className="w-8 h-1 rounded-full bg-[#d6c3b6]/50" />
+          </div>
+
+          {tableSelectionnee && selectedStyle && (
+            <div className="px-8 py-5 grid grid-cols-12 gap-6 items-start">
+
+              {/* Identité table */}
+              <div className="col-span-3">
+                <p className="font-['Manrope'] text-[10px] font-bold uppercase tracking-[0.2em] text-[#845325] mb-1">
+                  Table sélectionnée
+                </p>
+                <div className="font-['Noto_Serif'] text-4xl font-bold text-[#1b1c1a] leading-none mb-3">
+                  T{tableSelectionnee.numero}
+                </div>
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1"
+                  style={{ backgroundColor: selectedStyle.bg }}
+                >
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: selectedStyle.border }} />
+                  <span
+                    className="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest"
+                    style={{ color: selectedStyle.text }}
+                  >
                     {STATUT_LABELS[tableSelectionnee.statut]}
                   </span>
                 </div>
-
-                {/* Placeholder image */}
-                <div className="aspect-[4/3] bg-[#e9e8e4] w-full mb-6 flex items-center justify-center">
-                  <span className="font-label text-[10px] tracking-widest uppercase text-stone-400">Photo de la table</span>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Capacité</span>
-                    <span className="font-headline text-lg italic text-stone-600">{tableSelectionnee.capacite} Personnes</span>
-                  </div>
-
-                  {/* ── Réservation liée ── */}
-                  {resServation ? (
-                    <>
-                      <div className="h-px bg-stone-100" />
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Client actuel</span>
-                        <span className="font-headline text-base text-charcoal">
-                          {resServation.nom} ({resServation.nb_personnes} pers.)
-                        </span>
-                        <span className="font-body text-xs text-stone-400">
-                          Arrivée : {formatHeure(resServation.heure)} — {formatDate(resServation.date)}
-                        </span>
-                      </div>
-                      {resServation.message && (
-                        <div className="flex flex-col gap-1">
-                          <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Notes</span>
-                          <p className="font-body text-xs text-stone-500 italic leading-relaxed">
-                            {resServation.message}
-                          </p>
-                        </div>
-                      )}
-                      <div className="flex flex-col gap-1">
-                        <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Contact</span>
-                        <span className="font-body text-xs text-stone-500">{resServation.email}</span>
-                        {resServation.telephone && (
-                          <span className="font-body text-xs text-stone-400">{resServation.telephone}</span>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex flex-col gap-1">
-                      <span className="font-label text-[10px] tracking-[0.15em] uppercase text-stone-500">Réservation</span>
-                      <span className="font-body text-xs text-stone-300 italic">Aucune réservation assignée</span>
-                    </div>
-                  )}
-                </div>
+                <p className="mt-2 font-['Manrope'] text-[10px] text-[#51443b]">
+                  {tableSelectionnee.capacite} personnes
+                </p>
               </div>
 
-              <div className="mt-auto pt-8 border-t border-stone-100">
-                <h4 className="font-label text-[10px] tracking-widest uppercase text-stone-400 mb-4">Actions de Statut</h4>
-                <div className="flex flex-col gap-3">
-                  {STATUTS.map((s) => {
-                    const a = STATUT_ACTION[s]
-                    if (!a) return null
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => handleChangerStatut(s)}
-                        className={`flex items-center gap-3 px-4 py-3 font-label text-[10px] tracking-widest uppercase border transition-colors ${a.bg} ${a.text} ${a.border} hover:opacity-80`}
-                      >
-                        <div className={`w-2 h-2 rounded-full ${a.dot}`} />
-                        {a.label}
-                      </button>
-                    )
-                  })}
-                </div>
+              {/* Réservation liée */}
+              <div className="col-span-5 flex flex-col gap-4">
+                {resServation ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <p className="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest text-[#d6c3b6] mb-1">Client</p>
+                        <p className="font-['Manrope'] text-sm font-bold text-[#1b1c1a]">{resServation.nom}</p>
+                      </div>
+                      <div>
+                        <p className="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest text-[#d6c3b6] mb-1">Personnes</p>
+                        <p className="font-['Manrope'] text-sm font-bold text-[#1b1c1a]">{resServation.nb_personnes} pers.</p>
+                      </div>
+                    </div>
+                    <div className="pt-3" style={{ borderTop: '1px solid rgba(214,195,182,0.25)' }}>
+                      <p className="font-['Manrope'] text-[10px] font-bold uppercase tracking-widest text-[#d6c3b6] mb-1.5">Arrivée prévue</p>
+                      <p className="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider text-[#845325]">
+                        {formatHeure(resServation.heure)} — {formatDate(resServation.date)}
+                      </p>
+                    </div>
+                    {resServation.message && (
+                      <p className="font-['Manrope'] text-[11px] text-[#51443b] italic leading-relaxed">
+                        « {resServation.message} »
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center h-full">
+                    <span className="font-['Manrope'] text-[10px] text-[#d6c3b6] italic">
+                      Aucune réservation assignée
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions statut */}
+              <div className="col-span-4 flex flex-col gap-2">
+                {STATUTS.map((s) => {
+                  const isActive = tableSelectionnee.statut === s
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => handleChangerStatut(s)}
+                      className="w-full flex items-center gap-2.5 py-3 px-4 font-['Manrope'] text-[10px] font-bold tracking-[0.18em] uppercase transition-all duration-300"
+                      style={{
+                        backgroundColor: isActive ? STYLE[s].bg : 'transparent',
+                        border:          `1px solid ${isActive ? STYLE[s].border : 'rgba(214,195,182,0.4)'}`,
+                        color:           isActive ? STYLE[s].text : '#51443b',
+                        opacity:         isActive ? 1 : 0.55,
+                      }}
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: STYLE[s].border }} />
+                      {STATUT_LABELS[s]}
+                    </button>
+                  )
+                })}
                 <button
                   type="button"
                   onClick={() => setTableSelectionnee(null)}
-                  className="mt-8 w-full font-label text-xs tracking-widest uppercase text-stone-500 flex items-center justify-center gap-2 py-3 border border-stone-200 hover:bg-[#e9e8e4] transition-colors"
+                  className="mt-1 w-full font-['Manrope'] text-[10px] tracking-[0.18em] uppercase py-3 px-4 text-[#51443b] hover:bg-[#efeeea] transition-colors duration-300"
+                  style={{ border: '1px solid rgba(214,195,182,0.4)' }}
                 >
                   Fermer
                 </button>
               </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center gap-4">
-              <p className="font-label text-[10px] tracking-widest uppercase text-stone-400 leading-relaxed">
-                Cliquez sur une table pour voir ses options
-              </p>
-              <p className="text-[10px] text-stone-300 leading-relaxed">
-                Glissez pour repositionner
-              </p>
+
             </div>
           )}
-        </aside>
+        </div>
 
       </div>
-
-      {/* ── Footer légende ── */}
-      <footer className="h-14 bg-surface border-t border-stone-100 px-10 flex items-center gap-12 flex-shrink-0">
-        {STATUTS.map((s) => {
-          const a = STATUT_ACTION[s]
-          if (!a) return null
-          return (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-3 h-3 ${a.dot}`} />
-              <span className="font-label text-[10px] tracking-widest uppercase text-stone-500">
-                {STATUT_LABELS[s]} ({compteurs[s] || 0})
-              </span>
-            </div>
-          )
-        })}
-        <div className="ml-auto flex items-center gap-4">
-          <span className="font-label text-[10px] tracking-widest uppercase text-stone-300">
-            {tables.length} tables
-          </span>
-        </div>
-      </footer>
-
     </AdminLayout>
   )
 }
