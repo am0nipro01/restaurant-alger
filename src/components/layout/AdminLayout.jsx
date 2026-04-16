@@ -1,6 +1,17 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useReservationContext } from '../../context/ReservationContext'
+
+// Détecte un téléphone portable (pas une tablette).
+// On multiplie innerWidth par devicePixelRatio pour obtenir la largeur physique réelle,
+// indépendamment du DPR — la Xiaomi Pad 5 fait 1600px physiques (> 1550) quelle que
+// soit sa configuration, alors que les téléphones restent sous 1450px physiques.
+function isMobilePhone() {
+  const w = window.innerWidth
+  if (w >= 768) return false
+  return w * (window.devicePixelRatio || 1) < 1550
+}
 
 const IconCalendar = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
@@ -51,6 +62,13 @@ export default function AdminLayout({ children, fullHeight = false }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { enAttenteCount } = useReservationContext()
+  const [mobileBlocked, setMobileBlocked] = useState(isMobilePhone)
+
+  useEffect(() => {
+    const check = () => setMobileBlocked(isMobilePhone())
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const handleLogout = () => {
     logout()
@@ -62,8 +80,8 @@ export default function AdminLayout({ children, fullHeight = false }) {
   return (
     <div className={fullHeight ? 'h-screen flex flex-col overflow-hidden font-body' : 'min-h-screen font-body'}>
 
-      {/* ── Blocage mobile (< 768px) ── */}
-      <div className="md:hidden fixed inset-0 z-[9999] flex flex-col items-center justify-center p-10 text-center"
+      {/* ── Blocage mobile (téléphones uniquement, pas les tablettes) ── */}
+      {mobileBlocked && <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-10 text-center"
         style={{ backgroundColor: 'rgba(250, 249, 245, 0.92)', backdropFilter: 'blur(24px)' }}
       >
         <div className="w-10 h-px bg-[#845325] mb-8 mx-auto" />
@@ -77,7 +95,7 @@ export default function AdminLayout({ children, fullHeight = false }) {
           Utilisez une tablette ou un ordinateur
         </p>
         <div className="w-10 h-px bg-[#845325] mt-8 mx-auto" />
-      </div>
+      </div>}
 
       {/* ── Top bar fixe ── */}
       <header className="fixed top-0 left-0 right-0 h-14 z-50 flex items-center justify-between px-8 bg-[#faf9f5]/90 backdrop-blur-xl border-b border-[#1b1c1a]/5">
