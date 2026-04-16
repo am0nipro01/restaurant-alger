@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
 import pb from '../../lib/pocketbase'
@@ -117,6 +117,16 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
   const [mois,  setMois]              = useState(today.getMonth())
   const [jourSel, setJourSel]         = useState(null) // "YYYY-MM-DD"
   const [processing, setProcessing]   = useState(null) // id de la résa en cours de traitement
+  const panelRef = useRef(null)
+
+  // Scroll vers le panneau quand une date est sélectionnée — tablette uniquement (< lg = 1024px)
+  useEffect(() => {
+    if (jourSel && panelRef.current && window.innerWidth < 1024) {
+      setTimeout(() => {
+        panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 60) // délai pour laisser le panneau s'ouvrir avant le scroll
+    }
+  }, [jourSel])
 
   const handleStatut = async (id, statut) => {
     setProcessing(id)
@@ -251,11 +261,14 @@ function VueCalendrier({ reservations, onChangerStatut, tables, onAssignerTable 
       </div>
 
       {/* ── Panneau latéral jour sélectionné ── */}
-      <div className={`flex-shrink-0 bg-white transition-all duration-300 overflow-y-auto
-        ${jourSel
-          ? 'border-t border-stone-200 w-full lg:border-t-0 lg:border-l lg:w-80'
-          : 'w-0 overflow-hidden border-0'}
-      `}>
+      <div
+        ref={panelRef}
+        className={`flex-shrink-0 bg-white transition-all duration-300 overflow-y-auto
+          ${jourSel
+            ? 'border-t border-stone-200 w-full lg:border-t-0 lg:border-l lg:w-80'
+            : 'w-0 overflow-hidden border-0'}
+        `}
+      >
         {jourSel && (
           <div className="p-6">
             <div className="flex justify-between items-start mb-6">

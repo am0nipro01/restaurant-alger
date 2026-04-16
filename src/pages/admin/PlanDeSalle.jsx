@@ -96,12 +96,10 @@ export default function PlanDeSalle() {
       const newY = Math.max(0, Math.min(data.y, CANVAS_HEIGHT - height))
       await sauvegarderPosition(table.id, newX, newY)
       setTables((prev) => prev.map((t) => t.id === table.id ? { ...t, position_x: newX, position_y: newY } : t))
+    } else {
+      // Tap simple détecté — onClick n'est pas fiable sur tablette Android avec react-draggable
+      setTableSelectionnee((prev) => prev?.id === table.id ? null : table)
     }
-  }
-
-  const handleClickTable = (table) => {
-    if (draggedRef.current) return
-    setTableSelectionnee((prev) => prev?.id === table.id ? null : table)
   }
 
   const handleChangerStatut = async (statut) => {
@@ -280,7 +278,6 @@ export default function PlanDeSalle() {
                       ref={nodeRef}
                       className="absolute cursor-grab active:cursor-grabbing select-none"
                       style={{ width, height }}
-                      onClick={() => handleClickTable(table)}
                     >
                       <div
                         className="w-full h-full flex flex-col items-center justify-center gap-0.5"
