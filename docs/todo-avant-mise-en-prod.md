@@ -30,7 +30,7 @@
   - `public/robots.txt` → ligne `Sitemap:`
   - `public/sitemap.xml` → toutes les balises `<loc>`
   - `.env` → `VITE_SITE_URL`
-  - `netlify.toml` → `[context.production.environment]`
+  - Cloudflare Pages dashboard → Variables d'environnement
 - [ ] Ajouter une vraie image OG (`public/og-image.jpg`, 1200×630px) pour les partages réseaux sociaux
 - [ ] Soumettre le sitemap dans Google Search Console après déploiement
 - [ ] Soumettre le sitemap dans Bing Webmaster Tools après déploiement
@@ -52,10 +52,10 @@
 ## 🚀 Déploiement
 
 - [ ] Déployer PocketBase sur Fly.io
-- [ ] Définir `VITE_POCKETBASE_URL` sur Netlify (URL Fly.io en prod)
-- [ ] Définir `VITE_SITE_URL` sur Netlify (vrai domaine)
-- [ ] Déployer le front sur Netlify (connecter le repo GitHub)
-- [ ] Configurer le domaine .dz sur Netlify
+- [ ] Définir `VITE_POCKETBASE_URL` sur Cloudflare Pages (URL Fly.io en prod)
+- [ ] Définir `VITE_SITE_URL` sur Cloudflare Pages (vrai domaine)
+- [x] Déployer le front sur Cloudflare Pages (connecté — https://restaurant-alger.pages.dev/)
+- [ ] Configurer le domaine .dz sur Cloudflare Pages
 
 ---
 

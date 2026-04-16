@@ -69,14 +69,14 @@
 | Couche | Technologie | Notes |
 |---|---|---|
 | Front-end | React.js + Tailwind CSS | |
-| Hébergement front | Netlify | Gratuit, CDN, déploiement auto |
+| Hébergement front | Cloudflare Pages | Gratuit, CDN global, déploiement auto |
 | Back-end + BDD + Admin | PocketBase | Tout-en-un, dashboard admin natif, open source |
 | Hébergement back | Fly.io | Free tier généreux, compatible PocketBase |
 | Domaine | .dz (ANIC) | Organisme officiel algérien |
 | Support RTL | Requis | Pour la version arabe |
 
 ### Stratégie budget
-- **Phase 1 (maintenant)** : Stack 100% gratuite — Netlify + PocketBase + Fly.io
+- **Phase 1 (maintenant)** : Stack 100% gratuite — Cloudflare Pages + PocketBase + Fly.io
 - **Phase 2 (avec budget)** : Migration PocketBase vers VPS OVH ou DigitalOcean — rapide et sans refonte
 
 ---

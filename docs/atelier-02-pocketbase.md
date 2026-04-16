@@ -23,7 +23,7 @@ Configurer PocketBase comme back-end et base de données : définir les collecti
 
 ## Reste à faire
 - [ ] Déployer PocketBase sur Fly.io (reporté — à faire avant la mise en production)
-- [ ] Configurer `VITE_POCKETBASE_URL` sur le dashboard Netlify (à faire au moment du déploiement)
+- [ ] Configurer `VITE_POCKETBASE_URL` sur le dashboard Cloudflare Pages (à faire au moment du déploiement)
 
 ## Questions ouvertes
 (vide)

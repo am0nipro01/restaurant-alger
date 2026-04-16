@@ -3,7 +3,7 @@
 ## Statut : Terminé
 
 ## Objectif
-Définir et mettre en place la structure complète du projet : arborescence des dossiers, configuration initiale du front-end React + Tailwind, connexion avec PocketBase, et déploiement de base sur Netlify + Fly.io.
+Définir et mettre en place la structure complète du projet : arborescence des dossiers, configuration initiale du front-end React + Tailwind, connexion avec PocketBase, et déploiement de base sur Cloudflare Pages + Fly.io.
 
 ## Décisions prises
 - Pages publiques : `/`, `/menu`, `/reservation`, `/notre-histoire`, `/contact`
@@ -14,8 +14,8 @@ Définir et mettre en place la structure complète du projet : arborescence des 
 - Routeur : React Router DOM
 - Structure dossiers : `src/pages/public`, `src/pages/admin`, `src/components/layout`, `src/components/ui`, `src/lib`, `src/hooks`, `src/i18n`
 - Collections PocketBase : `reservations`, `tables`, `menu_categories`, `menu_items`, `pages_contenu`
-- Variable d'env : `VITE_POCKETBASE_URL` — local via `.env`, production via dashboard Netlify
-- Config Netlify : `netlify.toml` avec redirect `/*` → `/index.html` pour les routes React
+- Variable d'env : `VITE_POCKETBASE_URL` — local via `.env`, production via dashboard Cloudflare Pages
+- Config Cloudflare Pages : `public/_redirects` avec redirect `/*` → `/index.html` pour les routes React
 
 ## Travail réalisé
 - Projet React + Vite initialisé
@@ -29,7 +29,7 @@ Définir et mettre en place la structure complète du projet : arborescence des 
 - 5 collections créées dans PocketBase local
 - `.env` créé (non versionné)
 - `.env.example` créé (versionné)
-- `netlify.toml` créé et configuré
+- `public/_redirects` créé et configuré (Cloudflare Pages SPA routing)
 - Git initialisé, repo GitHub connecté, commits pushés
 
 ## Reste à faire
@@ -37,4 +37,4 @@ Définir et mettre en place la structure complète du projet : arborescence des 
 
 ## Questions ouvertes
 - Déploiement Fly.io (PocketBase en production) : à faire à l'Atelier 02
-- Variable `VITE_POCKETBASE_URL` à configurer sur le dashboard Netlify une fois le site déployé
+- Variable `VITE_POCKETBASE_URL` à configurer sur le dashboard Cloudflare Pages une fois le site déployé
