@@ -1,6 +1,6 @@
 # Algiers Gastronomy — Restaurant Website
 
-![Algiers Gastronomy](./docs/preview.png)
+![Algiers Gastronomy](./public/algiers-gastronomy.jpg)
 
 > A premium full-stack restaurant website with an integrated admin dashboard — built for a fine dining establishment in Algiers, Algeria.
 
