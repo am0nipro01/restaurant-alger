@@ -12,8 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Environment variables — ne jamais commiter
+.env
+.env.local
+.env.*.local
+
 # Claude Code
 .claude/
+
+# PocketBase — données locales, ne jamais commiter
+backend/pb_data/
 
 # Editor directories and files
 .vscode/*
